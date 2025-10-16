@@ -1,8 +1,8 @@
 # internet-programming
-## Budgeting and Finance Management Website
+## Smart Finance Tracker Website
 
 ### Overview:
-This project is a web-based application developed for managing personal budgeting and finances. It aims to provide users with a structured platform to record, organize, and monitor their financial activities.
+A web-based personal finance management application that helps users track expenses, manage budgets, and receive AI-powered financial insights.
 
 ### Technologies Used:
 
@@ -10,7 +10,7 @@ HTML
 
 CSS
 
-Java
+JavaScript
 
 ### Status:
 Project currently under development.
