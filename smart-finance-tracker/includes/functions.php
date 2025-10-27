@@ -147,13 +147,4 @@ function formatCurrency($amount, $currency = 'FCFA') {
     $symbol = $symbols[$currency] ?? 'FCFA';
     return $symbol . number_format($amount, 2);
 }
-
-// Log activity
-function logActivity($conn, $user_id, $action, $details = '') {
-    $stmt = $conn->prepare("INSERT INTO activity_log (user_id, action, details, ip_address, created_at) VALUES (?, ?, ?, ?, NOW())");
-    $ip = $_SERVER['REMOTE_ADDR'];
-    $stmt->bind_param("isss", $user_id, $action, $details, $ip);
-    $stmt->execute();
-    $stmt->close();
-}
 ?>
