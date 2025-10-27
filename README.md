@@ -35,13 +35,16 @@ smart-finance-tracker/
 └── index.php               # Landing page
 ```
 
-### Getting Started
+### DB Setup Instructions
 
-1. Clone the repository
-2. Import `database/schema.sql` into MySQL
-3. Configure database connection in `config/db_connect.php`
-4. Set up AI API key in configuration
-5. Open `index.php` in your browser
+1. Make sure MySQL is installed and running
+2. Create database and import schema:
+```bash
+   mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS financetrackerdb;" && mysql -u root -p financetrackerdb < FinanceTrackerDB.sql
+```
+3. Update `config/db_connect.php` with your MySQL password
+4. Start server: `php -S localhost:8000`
+5. Open: http://localhost:8000
 
 ### Status:
 Project currently under development.
