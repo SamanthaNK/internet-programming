@@ -1,1 +1,89 @@
 /** forms styles **/
+
+/*  
+   Color palette for the form styles used by authentication pages (forgot password, signin, signup, etc.):
+   - cafe noir: #4c3d19
+   - kombu: #354024
+   - moss: #889063
+   - tan: #cfbb99
+   - bone: #e5d7c4
+*/
+
+:root{
+	--cafe-noir: #4c3d19; 
+	--kombu: #354024;    
+	--moss: #889063;     
+	--tan: #cfbb99;      
+	--bone: #e5d7c4;    
+}
+
+/* Page wrapper class for auth forms that want the light bone background */
+body.forgot-page{
+	background: linear-gradient(180deg, var(--bone) 0%, #f7f1e6 100%);
+	color: var(--cafe-noir);
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+	margin: 0;
+}
+
+.forgot-container{
+	min-height: calc(100vh - 140px);
+	display:flex;
+	align-items:center;
+	justify-content:center;
+	padding: 40px 20px;
+}
+
+.forgot-card{
+	background: linear-gradient(180deg, rgba(255,255,255,0.95), var(--tan));
+	border: 1px solid rgba(68,58,38,0.06);
+	box-shadow: 0 10px 30px rgba(53,64,36,0.08);
+	border-radius: 12px;
+	max-width:420px;
+	width:100%;
+	padding:28px;
+}
+
+.brand{
+	display:flex;align-items:center;gap:12px;margin-bottom:8px;
+}
+.brand .logo{
+	width:44px;height:44px;border-radius:8px;background:var(--kombu);box-shadow:inset 0 -6px 0 rgba(0,0,0,0.06);
+}
+
+h1{font-size:20px;margin:6px 0 8px;color:var(--cafe-noir)}
+p.lead{margin:0 0 18px;color:var(--cafe-noir);opacity:0.9}
+
+label{display:block;font-size:13px;margin-bottom:6px;color:var(--cafe-noir)}
+input[type="email"], input[type="text"], input[type="password"]{width:100%;padding:12px 14px;border-radius:8px;border:1px solid rgba(68,58,38,0.12);background:transparent;font-size:15px}
+
+.actions{display:flex;flex-direction:column;gap:12px;margin-top:18px}
+
+.btn-primary{
+	background: linear-gradient(180deg,var(--kombu),var(--cafe-noir));
+	color: var(--bone);
+	border: none;
+	padding: 12px 14px;
+	border-radius: 8px;
+	font-weight:600;
+	cursor:pointer;
+	box-shadow: 0 6px 18px rgba(68,58,38,0.08);
+}
+
+.btn-secondary{
+	background: transparent;
+	color: var(--kombu);
+	border: 1px solid rgba(53,64,36,0.12);
+	padding:10px 12px;border-radius:8px;cursor:pointer;
+}
+
+.meta{margin-top:12px;font-size:13px;color:var(--cafe-noir);opacity:0.85}
+
+.links{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+.links a{color:var(--kombu);text-decoration:none;font-weight:600}
+
+@media (max-width:480px){
+	.forgot-card{padding:20px;margin:0 8px}
+}
+
+/* Additional small utilities used by forms */
+.form-note{margin-top:10px;font-size:13px;color:var(--cafe-noir);opacity:0.85}
