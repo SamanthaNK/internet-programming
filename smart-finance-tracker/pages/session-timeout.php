@@ -4,6 +4,7 @@
 
 session_start();
 
+// Get reason for session timeout
 $reason = $_GET['reason'] ?? 'timeout';
 
 $title = 'Session Expired';

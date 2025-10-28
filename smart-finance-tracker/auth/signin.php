@@ -43,7 +43,6 @@ $csrf_token = generateCSRFToken();
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -51,13 +50,12 @@ $csrf_token = generateCSRFToken();
     <link rel="stylesheet" href="/assets/css/style.css">
     <link rel="stylesheet" href="/assets/css/auth.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 
 <body class="auth-page">
     <div class="auth-container">
         <!-- Left side -->
-        <div class="auth-left">
+        <aside class="auth-left">
             <div class="auth-branding">
                 <div class="brand-icon">
                     <i class="bi bi-tree-fill"></i>
@@ -89,25 +87,25 @@ $csrf_token = generateCSRFToken();
                 <div class="leaf leaf-1"><i class="bi bi-leaf"></i></div>
                 <div class="leaf leaf-2"><i class="bi bi-flower1"></i></div>
             </div>
-        </div>
+        </aside>
 
         <!-- Right Side(form) -->
-        <div class="auth-right">
+        <main class="auth-right">
             <div class="auth-form-container">
-                <div class="auth-header">
+                <header class="auth-header">
                     <h2>Sign In</h2>
                     <p>Access your account</p>
-                </div>
-
+                </header>
+                <!-- Error Alert -->
                 <?php if ($error): ?>
-                    <div class="alert alert-error">
+                    <div class="alert alert-error" role="alert">
                         <i class="bi bi-exclamation-circle"></i>
                         <span><?php echo htmlspecialchars($error); ?></span>
                     </div>
                 <?php endif; ?>
-
+                <!-- Success Alert -->
                 <?php if ($success): ?>
-                    <div class="alert alert-success">
+                    <div class="alert alert-success" role="alert">
                         <i class="bi bi-check-circle"></i>
                         <span><?php echo htmlspecialchars($success); ?></span>
                     </div>
@@ -117,7 +115,7 @@ $csrf_token = generateCSRFToken();
                     <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
 
                     <div class="form-group">
-                        <label for="email">Email Address</label>
+                        <label for="email" class="form-label">Email Address</label>
                         <div class="input-with-icon">
                             <i class="bi bi-envelope"></i>
                             <input type="email"
@@ -126,13 +124,14 @@ $csrf_token = generateCSRFToken();
                                 class="form-control"
                                 placeholder="your.email@example.com"
                                 required
-                                autocomplete="email">
+                                autocomplete="email"
+                                aria-describedby="emailError">
                         </div>
-                        <span class="error-message" id="emailError"></span>
+                        <span class="error-message" id="emailError" role="alert"></span>
                     </div>
 
                     <div class="form-group">
-                        <label for="password">Password</label>
+                        <label for="password" class="form-label">Password</label>
                         <div class="input-with-icon">
                             <i class="bi bi-lock"></i>
                             <input type="password"
@@ -140,12 +139,13 @@ $csrf_token = generateCSRFToken();
                                 name="password"
                                 class="form-control"
                                 placeholder="••••••••" required
-                                autocomplete="current-password">
-                            <button type="button" class="toggle-password" onclick="togglePassword('password')">
+                                autocomplete="current-password"
+                                aria-describedby="passwordError">
+                            <button type="button" class="toggle-password" onclick="togglePassword('password')" aria-label="Toggle password visibility">
                                 <i class="bi bi-eye" id="toggleIcon"></i>
                             </button>
                         </div>
-                        <span class="error-message" id="passwordError"></span>
+                        <span class="error-message" id="passwordError" role="alert"></span>
                     </div>
 
                     <div class="form-options">
@@ -181,7 +181,7 @@ $csrf_token = generateCSRFToken();
                     </a>
                 </div>
             </div>
-        </div>
+        </main>
     </div>
     <script src="../assets/js/auth.js"></script>
 </body>
