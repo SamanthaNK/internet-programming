@@ -87,7 +87,7 @@
     margin-bottom: 1.5rem;
 }
 
-.auth-branding > p {
+.auth-branding>p {
     font-size: 1.25rem;
     color: var(--text-secondary);
     font-weight: 300;
@@ -480,18 +480,21 @@
     animation-delay: 4s;
 }
 
-/* Password Strength Indicator */
+/* password strength indicator */
 #passwordStrength {
     margin-top: 0.5rem;
 }
 
-/* Responsive Design */
+/* responsive design */
+
+/* large tablet */
 @media (max-width: 1200px) {
     .auth-branding h1 {
         font-size: 3rem;
     }
 }
 
+/* tablet and below */
 @media (max-width: 992px) {
     .auth-container {
         flex-direction: column;
@@ -517,7 +520,7 @@
 
     .auth-features {
         display: none;
-        /* Hide features on mobile for cleaner look */
+        /* hide features on mobile for cleaner look */
     }
 }
 
@@ -556,6 +559,7 @@
     }
 }
 
+/* small mobile devices */
 @media (max-width: 576px) {
 
     .auth-left,
@@ -591,7 +595,7 @@
     }
 }
 
-/* Print Styles */
+/* print styles */
 @media print {
 
     .decorative-elements,

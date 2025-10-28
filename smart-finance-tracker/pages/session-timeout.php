@@ -4,18 +4,28 @@
 
 session_start();
 
-// Get reason for session timeout
+// Get reason for timeout
 $reason = $_GET['reason'] ?? 'timeout';
 
-$title = 'Session Expired';
-$message = 'Your session has expired for security reasons. Please sign in again to continue.';
-$icon = 'clock-history';
+// Set content based on reason
+$content = [
+    'timeout' => [
+        'title' => 'Session Expired',
+        'message' => 'Your session has expired for security reasons. Please sign in again to continue.',
+        'icon' => 'clock-history',
+        'info_title' => 'Why did this happen?',
+        'info_message' => 'For your security, we automatically sign you out after 30 minutes of inactivity.'
+    ],
+    'logout' => [
+        'title' => 'Signed Out',
+        'message' => 'You have been successfully signed out. Come back soon!',
+        'icon' => 'box-arrow-right',
+        'info_title' => 'Your data is secure',
+        'info_message' => 'All your financial information has been safely logged out and protected.'
+    ]
+];
 
-if ($reason === 'logout') {
-    $title = 'Signed Out';
-    $message = 'You have been successfully signed out. Come back soon!';
-    $icon = 'box-arrow-right';
-}
+$current = $content[$reason] ?? $content['timeout'];
 ?>
 
 <!DOCTYPE html>
@@ -34,34 +44,26 @@ if ($reason === 'logout') {
 <body>
     <div class="auth-container">
         <div class="auth-card">
-            <div class="auth-header">
+            <header class="auth-header">
                 <div class="auth-icon">
                     <i class="bi bi-<?php echo $current['icon']; ?>"></i>
                 </div>
                 <h1 class="auth-title"><?php echo htmlspecialchars($title); ?></h1>
                 <p class="auth-subtitle"><?php echo htmlspecialchars($message); ?></p>
-            </div>
+            </header>
 
+            <!-- Session Info -->
             <div class="session-info">
-                <?php if ($reason === 'timeout'): ?>
-                    <div class="info-card">
-                        <i class="bi bi-info-circle"></i>
-                        <div>
-                            <h3>Why did this happen?</h3>
-                            <p>For your security, we automatically sign you out after 30 minutes of inactivity.</p>
-                        </div>
+                <div class="info-card">
+                    <i class="bi bi-<?php echo $reason === 'timeout' ? 'info-circle' : 'shield-check'; ?>"></i>
+                    <div>
+                        <h3><?php echo htmlspecialchars($current['info_title']); ?></h3>
+                        <p><?php echo htmlspecialchars($current['info_message']); ?></p>
                     </div>
-                <?php else: ?>
-                    <div class="info-card">
-                        <i class="bi bi-shield-check"></i>
-                        <div>
-                            <h3>Your data is secure</h3>
-                            <p>All your financial information has been safely logged out and protected.</p>
-                        </div>
-                    </div>
-                <?php endif; ?>
+                </div>
             </div>
 
+            <!-- Actions -->
             <div class="timeout-actions">
                 <a href="/auth/signin.php" class="btn btn-primary">
                     <i class="bi bi-box-arrow-in-right"></i>
@@ -72,9 +74,7 @@ if ($reason === 'logout') {
                     Go to Home
                 </a>
             </div>
-
         </div>
-
         <!-- Decorative Elements -->
         <div class="decorative-elements">
             <div class="leaf leaf-1"><i class="bi bi-leaf"></i></div>
