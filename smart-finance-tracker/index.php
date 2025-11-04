@@ -53,8 +53,7 @@ $current_page = 'home';
             <div class="fade-in-up">
                 <h1>Take Control of Your Financial Future</h1>
                 <p>
-                    Smart finance tracking with AI-powered insights. Track expenses, 
-                    set budgets, achieve goals, and make better financial decisions.
+                    Track Expenses. Set Budgets. Achieve Goals.
                 </p>
                 <div class="error-actions">
                     <a href="/auth/signup.php" class="btn btn-primary">
@@ -87,7 +86,7 @@ $current_page = 'home';
                     </div>
                     <h3 style="font-size: 1.5rem; text-align: center; margin-bottom: 1rem;">Track Transactions</h3>
                     <p style="text-align: center; color: var(--text-secondary);">
-                        Easily record income and expenses with our intuitive interface. 
+                        Easily record income and expenses with our intuitive interface.
                         Categorize and organize all your financial activities.
                     </p>
                 </div>
@@ -98,7 +97,7 @@ $current_page = 'home';
                     </div>
                     <h3 style="font-size: 1.5rem; text-align: center; margin-bottom: 1rem;">Budget Planning</h3>
                     <p style="text-align: center; color: var(--text-secondary);">
-                        Set monthly budgets for different categories and get alerts 
+                        Set monthly budgets for different categories and get alerts
                         when you're approaching your limits.
                     </p>
                 </div>
@@ -109,7 +108,7 @@ $current_page = 'home';
                     </div>
                     <h3 style="font-size: 1.5rem; text-align: center; margin-bottom: 1rem;">AI Insights</h3>
                     <p style="text-align: center; color: var(--text-secondary);">
-                        Get personalized financial tips and recommendations powered 
+                        Get personalized financial tips and recommendations powered
                         by artificial intelligence.
                     </p>
                 </div>
@@ -120,7 +119,7 @@ $current_page = 'home';
                     </div>
                     <h3 style="font-size: 1.5rem; text-align: center; margin-bottom: 1rem;">Detailed Reports</h3>
                     <p style="text-align: center; color: var(--text-secondary);">
-                        Visualize your spending patterns with beautiful charts and 
+                        Visualize your spending patterns with beautiful charts and
                         comprehensive analytics.
                     </p>
                 </div>
@@ -131,7 +130,7 @@ $current_page = 'home';
                     </div>
                     <h3 style="font-size: 1.5rem; text-align: center; margin-bottom: 1rem;">Financial Goals</h3>
                     <p style="text-align: center; color: var(--text-secondary);">
-                        Set savings goals and track your progress. Stay motivated 
+                        Set savings goals and track your progress. Stay motivated
                         with milestone achievements.
                     </p>
                 </div>
@@ -142,7 +141,7 @@ $current_page = 'home';
                     </div>
                     <h3 style="font-size: 1.5rem; text-align: center; margin-bottom: 1rem;">Secure & Private</h3>
                     <p style="text-align: center; color: var(--text-secondary);">
-                        Your financial data is encrypted and protected with 
+                        Your financial data is encrypted and protected with
                         industry-standard security measures.
                     </p>
                 </div>
@@ -156,7 +155,7 @@ $current_page = 'home';
             <div class="card card-elevated" style="text-align: center; padding: 4rem 2rem; background: linear-gradient(135deg, var(--primary-light) 0%, var(--bg-card) 100%);">
                 <h2 style="margin-bottom: 1rem;">Ready to Transform Your Finances?</h2>
                 <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto 2rem; font-size: 1.1rem;">
-                    Join thousands of users who are already taking control of their financial future. 
+                    Join thousands of users who are already taking control of their financial future.
                     Start your journey today – it's completely free!
                 </p>
                 <div class="error-actions">
