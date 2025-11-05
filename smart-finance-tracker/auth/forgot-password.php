@@ -26,6 +26,7 @@ $csrf_token = generateCSRFToken();
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -33,8 +34,8 @@ $csrf_token = generateCSRFToken();
 	<link rel="stylesheet" href="../assets/css/style.css">
 	<link rel="stylesheet" href="../assets/css/auth.css">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-	<link rel="stylesheet" href="../assets/css/forms.css">
 </head>
+
 <body class="auth-page">
 	<div class="auth-container">
 		<!-- Left side (branding) -->
@@ -103,11 +104,9 @@ $csrf_token = generateCSRFToken();
 						<span class="error-message" id="emailError" role="alert"></span>
 					</div>
 
-					<div class="form-options">
-						<a href="/auth/signin.php" class="link-primary">Back to sign in</a>
-					</div>
-
-					<button type="submit" class="btn btn-primary btn-full">Send reset link</button>
+					<button type="submit" class="btn btn-primary btn-full">
+						<i class="bi bi-send"></i> Send reset link
+					</button>
 
 					<div class="divider">
 						<span>or</span>
@@ -136,4 +135,5 @@ $csrf_token = generateCSRFToken();
 
 	<script src="../assets/js/auth.js"></script>
 </body>
+
 </html>

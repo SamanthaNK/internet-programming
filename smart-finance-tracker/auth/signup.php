@@ -106,7 +106,7 @@ $csrf_token = generateCSRFToken();
                                 id="name"
                                 name="name"
                                 class="form-control"
-                                placeholder="John Doe"
+                                placeholder="Kim Namjoon"
                                 value="<?php echo htmlspecialchars($old_values['name']); ?>"
                                 required
                                 autocomplete="name"

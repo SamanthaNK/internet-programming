@@ -19,13 +19,13 @@ function togglePassword(fieldId, iconId = 'toggleIcon') {
 }
 
 // Password strength indicator (only for signup page)
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const passwordField = document.getElementById('password');
     const strengthDiv = document.getElementById('passwordStrength');
 
     // Only run if both elements exist (signup page)
     if (passwordField && strengthDiv) {
-        passwordField.addEventListener('input', function(e) {
+        passwordField.addEventListener('input', function (e) {
             const password = e.target.value;
 
             let strength = 0;
@@ -65,6 +65,26 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+// Google Sign In Button Handler
+document.addEventListener('DOMContentLoaded', function () {
+    const googleSignInBtn = document.getElementById('googleSignIn');
+    const googleSignUpBtn = document.getElementById('googleSignUp');
+
+    if (googleSignInBtn) {
+        googleSignInBtn.addEventListener('click', function () {
+            // Get Google OAuth URL from server
+            window.location.href = '/auth/process/google-init.php?action=signin';
+        });
+    }
+
+    if (googleSignUpBtn) {
+        googleSignUpBtn.addEventListener('click', function () {
+            // Get Google OAuth URL from server
+            window.location.href = '/auth/process/google-init.php?action=signup';
+        });
+    }
+});
+
 // Form validation helpers
 function validateEmail(email) {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -74,17 +94,17 @@ function validateEmail(email) {
 function validatePassword(password) {
     // At least 8 characters, 1 uppercase, 1 lowercase, 1 number
     return password.length >= 8 &&
-           /[A-Z]/.test(password) &&
-           /[a-z]/.test(password) &&
-           /[0-9]/.test(password);
+        /[A-Z]/.test(password) &&
+        /[a-z]/.test(password) &&
+        /[0-9]/.test(password);
 }
 
 // Real-time form validation (signin)
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const signinForm = document.getElementById('signinForm');
 
     if (signinForm) {
-        signinForm.addEventListener('submit', function(e) {
+        signinForm.addEventListener('submit', function (e) {
             let isValid = true;
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
@@ -118,11 +138,11 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Real-time form validation (signup)
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const signupForm = document.getElementById('signupForm');
 
     if (signupForm) {
-        signupForm.addEventListener('submit', function(e) {
+        signupForm.addEventListener('submit', function (e) {
             let isValid = true;
             const name = document.getElementById('name').value.trim();
             const email = document.getElementById('email').value.trim();
@@ -192,13 +212,13 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Auto-dismiss alerts after 5 seconds
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const alerts = document.querySelectorAll('.alert');
-    alerts.forEach(function(alert) {
-        setTimeout(function() {
+    alerts.forEach(function (alert) {
+        setTimeout(function () {
             alert.style.transition = 'opacity 0.5s ease';
             alert.style.opacity = '0';
-            setTimeout(function() {
+            setTimeout(function () {
                 alert.remove();
             }, 500);
         }, 5000);
