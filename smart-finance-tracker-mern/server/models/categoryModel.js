@@ -4,7 +4,7 @@ const categorySchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true
+        default: null
     },
     name: {
         type: String,
@@ -20,11 +20,13 @@ const categorySchema = new mongoose.Schema({
     isDefault: {
         type: Boolean,
         default: false
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now
     }
-});
+},
+    {
+        timestamps: true  // createdAt and updatedAt
+    });
+
+// Index to ensure unique category names per user and type
+categorySchema.index({ userId: 1, name: 1, type: 1 }, { unique: true });
 
 module.exports = mongoose.model('Category', categorySchema);

@@ -1,10 +1,51 @@
 const Transaction = require('../models/transactionModel');
+const Category = require('../models/categoryModel')
 
 // Get all transactions for user
 exports.getTransactions = async (req, res) => {
     try {
-        const transactions = await Transaction.find({ userId: req.userId })
-            .sort({ date: -1 }); // newest first
+        // Filter transactions based on query parameters
+        const {
+            type,
+            category,
+            startDate,
+            endDate,
+            sort,
+            limit = 100
+        } = req.query
+
+        let query = { userId: req.user._id };
+
+        if (type && ['income', 'expense'].includes(type)) {
+            query.type = type;
+        }
+
+        if (category) {
+            query.category = category;
+        }
+
+        if (startDate || endDate) {
+            query.transactionDate = {};
+            if (startDate) {
+                query.transactionDate.$gte = new Date(startDate);
+            }
+            if (endDate) {
+                query.transactionDate.$lte = new Date(endDate);
+            }
+        }
+
+        // Decide how to sort transactions
+        let sortOption = { transactionDate: -1 }; // default newest first
+
+        if (sort === 'date-asc') sortOption = { transactionDate: 1 };
+        if (sort === 'date-desc') sortOption = { transactionDate: -1 };
+        if (sort === 'amount-asc') sortOption = { amount: 1 };
+        if (sort === 'amount-desc') sortOption = { amount: -1 };
+
+        const transactions = await Transaction.find(query)
+            .populate('category', 'name type')
+            .sort(sortOption)
+            .limit(parseInt(limit));
 
         res.json({
             success: true,
@@ -25,8 +66,24 @@ exports.createTransaction = async (req, res) => {
     try {
         const { type, amount, category, description, date } = req.body;
 
-        const transaction = new Transaction({
-            userId: req.userId,
+        // Check if category exists and belongs to the user
+        const categoryExists = await Category.findOne({
+            _id: category,
+            $or: [
+                { isDefault: true, userId: null },
+                { userId: req.user._id }
+            ]
+        });
+
+        if (!categoryExists) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid category'
+            });
+        }
+
+        const transaction = await Transaction.create({
+            userId: req.user._id,
             type,
             amount,
             category,
@@ -34,10 +91,14 @@ exports.createTransaction = async (req, res) => {
             transactionDate: date || Date.now()
         });
 
+        const populatedTransaction = await transaction
+            .findById(transaction._id)
+            .populate('category', 'name type');
+
         res.status(201).json({
             success: true,
             message: 'Transaction created successfully',
-            data: transaction
+            data: populatedTransaction
         });
     } catch (error) {
         console.error('Create transaction error:', error);
@@ -62,8 +123,8 @@ exports.deleteTransaction = async (req, res) => {
         }
 
         // Check if user owns the transaction
-        if (transaction.userId.toString() !== req.userId) {
-            return res.status(401).json({
+        if (transaction.userId.toString() !== req.user._id.toString()) {
+            return res.status(403).json({
                 success: false,
                 message: 'Not authorized to delete this transaction'
             });
@@ -87,16 +148,39 @@ exports.deleteTransaction = async (req, res) => {
 // Get dashboard summary statistics
 exports.getSummaryStats = async (req, res) => {
     try {
-        const transactions = await Transaction.find({ userId: req.userId });
+
+        // Get period from URL query parameters
+        const {period = 'month'} = req.query;
+
+        let startDate;
+        const now = new Date();
+
+        // Calculate start date based on period
+        if (period === 'month') {
+            startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        } else if (period === 'year') {
+            startDate = new Date(now.getFullYear(), 0, 1);
+        } else {
+            startDate = new Date(0); // From beginning
+        }
+
+        const transactions = await Transaction.find({ 
+            userId: req.user._id,
+            transactionDate: { $gte: startDate }
+        });
 
         let totalIncome = 0;
         let totalExpense = 0;
+        let incomeCount = 0;
+        let expenseCount = 0;
 
         transactions.forEach(transaction => {
             if (transaction.type === 'income') {
                 totalIncome += transaction.amount;
+                incomeCount++;
             } else if (transaction.type === 'expense') {
                 totalExpense += transaction.amount;
+                expenseCount++;
             }
         });
 
@@ -105,7 +189,10 @@ exports.getSummaryStats = async (req, res) => {
             data: {
                 totalIncome,
                 totalExpense,
-                balance: totalIncome - totalExpense
+                balance: totalIncome - totalExpense,
+                incomeCount,
+                expenseCount,
+                totalTransactions: transactions.length
             }
         });
     } catch (error) {
