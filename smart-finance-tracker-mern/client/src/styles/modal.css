@@ -103,13 +103,14 @@
 }
 
 .modal-content::-webkit-scrollbar-track {
-    background: var(--bg-secondary);
+    background: transparent;
     border-radius: 10px;
 }
 
 .modal-content::-webkit-scrollbar-thumb {
     background: var(--accent-tan);
     border-radius: 10px;
+    background-clip: content-box;
 }
 
 /* Responsive */

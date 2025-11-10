@@ -62,6 +62,11 @@
     font-size: 0.875rem;
 }
 
+.btn-full {
+    width: 100%;
+    justify-content: center;
+}
+
 /* forms */
 .form-group {
     margin-bottom: 1.5rem;
@@ -340,17 +345,6 @@
     flex-wrap: wrap;
 }
 
-.hero-image {
-    margin-top: 3rem;
-    text-align: center;
-}
-
-.hero-image i {
-    font-size: 8rem;
-    color: var(--primary-moss);
-    opacity: 0.3;
-}
-
 .features-section {
     padding: 4rem 2rem;
 }
@@ -475,10 +469,6 @@
 
     .hero-actions {
         flex-direction: column;
-    }
-
-    .hero-image i {
-        font-size: 5rem;
     }
 }
 

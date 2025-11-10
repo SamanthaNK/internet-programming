@@ -164,7 +164,6 @@ function Dashboard() {
                     )}
 
                     <div className="period-selector">
-                        <h3>Time Period</h3>
                         <div className="period-buttons">
                             {['month', 'year', 'all'].map(period => (
                                 <button

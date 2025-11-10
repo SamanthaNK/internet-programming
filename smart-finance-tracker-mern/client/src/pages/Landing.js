@@ -29,10 +29,6 @@ function Landing() {
                                 </Link>
                             </div>
                         </div>
-
-                        <div className="hero-image">
-                            <i className="bi bi-graph-up-arrow float-animation"></i>
-                        </div>
                     </div>
                 </section>
 
