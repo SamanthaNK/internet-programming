@@ -30,6 +30,14 @@ const userSchema = new mongoose.Schema({
         default: 'XAF',
         enum: ['XAF', 'USD', 'EUR', 'GBP', 'NGN', 'ZAR']
     },
+    resetPasswordToken: {
+        type: String,
+        select: false
+    },
+    resetPasswordExpire: {
+        type: Date,
+        select: false
+    },
     isActive: {
         type: Boolean,
         default: true

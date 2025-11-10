@@ -91,7 +91,7 @@ exports.createTransaction = async (req, res) => {
             transactionDate: date || Date.now()
         });
 
-        const populatedTransaction = await transaction
+        const populatedTransaction = await Transaction
             .findById(transaction._id)
             .populate('category', 'name type');
 
@@ -105,6 +105,74 @@ exports.createTransaction = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Error creating transaction'
+        });
+    }
+};
+
+// Update transaction
+exports.updateTransaction = async (req, res) => {
+    try {
+        const { type, amount, category, description, date } = req.body;
+
+        // Find transaction
+        let transaction = await Transaction.findById(req.params.id);
+
+        if (!transaction) {
+            return res.status(404).json({
+                success: false,
+                message: 'Transaction not found'
+            });
+        }
+
+        // Check if user owns the transaction
+        if (transaction.userId.toString() !== req.user._id.toString()) {
+            return res.status(403).json({
+                success: false,
+                message: 'Not authorized to update this transaction'
+            });
+        }
+
+        // If category is being updated, validate it
+        if (category) {
+            const categoryExists = await Category.findOne({
+                _id: category,
+                $or: [
+                    { isDefault: true, userId: null },
+                    { userId: req.user._id }
+                ]
+            });
+
+            if (!categoryExists) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Invalid category'
+                });
+            }
+        }
+
+        // Update fields
+        transaction.type = type || transaction.type;
+        transaction.amount = amount || transaction.amount;
+        transaction.category = category || transaction.category;
+        transaction.description = description !== undefined ? description : transaction.description;
+        transaction.transactionDate = date || transaction.transactionDate;
+
+        await transaction.save();
+
+        const populatedTransaction = await Transaction
+            .findById(transaction._id)
+            .populate('category', 'name type');
+
+        res.json({
+            success: true,
+            message: 'Transaction updated successfully',
+            data: populatedTransaction
+        });
+    } catch (error) {
+        console.error('Update transaction error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error updating transaction'
         });
     }
 };
@@ -150,7 +218,7 @@ exports.getSummaryStats = async (req, res) => {
     try {
 
         // Get period from URL query parameters
-        const {period = 'month'} = req.query;
+        const { period = 'month' } = req.query;
 
         let startDate;
         const now = new Date();
@@ -164,7 +232,7 @@ exports.getSummaryStats = async (req, res) => {
             startDate = new Date(0); // From beginning
         }
 
-        const transactions = await Transaction.find({ 
+        const transactions = await Transaction.find({
             userId: req.user._id,
             transactionDate: { $gte: startDate }
         });
