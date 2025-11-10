@@ -1,39 +1,30 @@
 import React, { useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { login } from '../services/api';
-import '../styles/auth.css';
+import { useTheme } from '../context/ThemeContext';
 
 function SignIn() {
-    const [formData, setFormData] = useState({
-        email: '',
-        password: ''
-    });
-    const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
+    const [formData, setFormData] = useState({ email: '', password: '' });
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
-
     const navigate = useNavigate();
     const location = useLocation();
+    const { isDark, toggleTheme } = useTheme();
 
     // Get success message from signup redirect
     React.useEffect(() => {
         if (location.state?.message) {
-            setSuccess(location.state.message);
+            toast.success(location.state.message);
         }
     }, [location]);
 
     const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        });
-        setError('');
+        setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError('');
         setLoading(true);
 
         try {
@@ -42,148 +33,150 @@ function SignIn() {
             if (response.data.success) {
                 localStorage.setItem('token', response.data.token);
                 localStorage.setItem('user', JSON.stringify(response.data.data.user));
+                toast.success('Welcome back!');
                 navigate('/dashboard');
             }
         } catch (error) {
-            setError(error.response?.data?.message || 'Login failed. Please try again.');
+            const message = error.response?.data?.message || 'Login failed. Please try again.';
+            toast.error(message);
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="auth-page">
-            <div className="auth-container">
-                <div className="auth-left">
-                    <div className="auth-branding">
-                        <div className="brand-icon">
-                            <i className="bi bi-tree-fill"></i>
+        <div className="min-h-screen flex bg-neutral-50 dark:bg-neutral-900">
+            {/* Left Side - Branding */}
+            <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary-100 to-primary-200 dark:from-primary-900 dark:to-primary-800 p-12 items-center justify-center relative overflow-hidden">
+                <div className="max-w-md z-10">
+                    <div className="flex items-center space-x-3 mb-8">
+                        <div className="w-16 h-16 bg-primary-600 rounded-2xl flex items-center justify-center shadow-lg">
+                            <i className="bi bi-tree-fill text-3xl text-white"></i>
                         </div>
-                        <h1>Welcome Back to<br />FinanceTracker</h1>
-                        <p>Continue managing your finances</p>
+                        <span className="text-3xl font-serif font-medium text-primary-800 dark:text-primary-100">FinanceTracker</span>
                     </div>
-
-                    <div className="decorative-elements">
-                        <div className="leaf leaf-1">
-                            <i className="bi bi-leaf"></i>
-                        </div>
-                        <div className="leaf leaf-2">
-                            <i className="bi bi-flower1"></i>
-                        </div>
-                    </div>
+                    <h1 className="text-4xl font-serif font-medium text-primary-900 dark:text-primary-50 mb-4">Welcome Back</h1>
+                    <p className="text-lg text-primary-700 dark:text-primary-200">Continue managing your finances with ease and precision</p>
                 </div>
+                {/* Decorative elements */}
+                <div className="absolute top-20 left-20 w-32 h-32 bg-primary-300 dark:bg-primary-700 rounded-full opacity-20 blur-3xl"></div>
+                <div className="absolute bottom-20 right-20 w-40 h-40 bg-primary-400 dark:bg-primary-600 rounded-full opacity-20 blur-3xl"></div>
+            </div>
 
-                <main className="auth-right">
-                    <div className="auth-form-container">
-                        <div className="auth-header">
-                            <h2>Sign In</h2>
-                            <p>Access your account</p>
+            {/* Right Side - Form */}
+            <div className="flex-1 flex items-center justify-center p-8">
+                <div className="max-w-md w-full">
+                    {/* Mobile Logo */}
+                    <div className="lg:hidden flex items-center justify-center space-x-2 mb-8">
+                        <i className="bi bi-tree-fill text-3xl text-primary-600"></i>
+                        <span className="text-2xl font-serif font-medium text-neutral-900 dark:text-neutral-100">FinanceTracker</span>
+                    </div>
+
+                    {/* Dark Mode Toggle */}
+                    <div className="flex justify-end mb-6">
+                        <button
+                            onClick={toggleTheme}
+                            className="p-2 rounded-lg text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition"
+                        >
+                            <i className={`bi bi-${isDark ? 'sun' : 'moon'}-fill text-xl`}></i>
+                        </button>
+                    </div>
+
+                    <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-xl p-8">
+                        <div className="mb-8">
+                            <h2 className="text-3xl font-serif font-medium text-neutral-900 dark:text-neutral-100 mb-2">Sign In</h2>
+                            <p className="text-neutral-600 dark:text-neutral-400">Access your account</p>
                         </div>
 
-                        {success && (
-                            <div className="alert alert-success">
-                                <i className="bi bi-check-circle"></i>
-                                <span>{success}</span>
-                            </div>
-                        )}
-
-                        {error && (
-                            <div className="alert alert-error">
-                                <i className="bi bi-exclamation-circle"></i>
-                                <span>{error}</span>
-                            </div>
-                        )}
-
-                        <form onSubmit={handleSubmit} className="auth-form">
-                            <div className="form-group">
-                                <label htmlFor="email">Email Address</label>
-                                <div className="input-with-icon">
-                                    <i className="bi bi-envelope"></i>
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                            <div>
+                                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                                    Email Address
+                                </label>
+                                <div className="relative">
+                                    <i className="bi bi-envelope absolute left-4 top-1/2 transform -translate-y-1/2 text-neutral-400"></i>
                                     <input
                                         type="email"
-                                        id="email"
                                         name="email"
-                                        className="form-control"
-                                        placeholder="your.email@example.com"
                                         value={formData.email}
                                         onChange={handleChange}
+                                        className="w-full pl-12 pr-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition"
+                                        placeholder="your.email@example.com"
                                         required
                                         disabled={loading}
                                     />
                                 </div>
                             </div>
 
-                            <div className="form-group">
-                                <label htmlFor="password">Password</label>
-                                <div className="input-with-icon">
-                                    <i className="bi bi-lock"></i>
+                            <div>
+                                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                                    Password
+                                </label>
+                                <div className="relative">
+                                    <i className="bi bi-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-neutral-400"></i>
                                     <input
                                         type={showPassword ? 'text' : 'password'}
-                                        id="password"
                                         name="password"
-                                        className="form-control"
-                                        placeholder="••••••••"
                                         value={formData.password}
                                         onChange={handleChange}
+                                        className="w-full pl-12 pr-12 py-3 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition"
+                                        placeholder="••••••••"
                                         required
                                         disabled={loading}
                                     />
                                     <button
                                         type="button"
-                                        className="toggle-password"
                                         onClick={() => setShowPassword(!showPassword)}
-                                        tabIndex="-1"
+                                        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
                                     >
                                         <i className={`bi bi-eye${showPassword ? '-slash' : ''}`}></i>
                                     </button>
                                 </div>
                             </div>
 
-                            <div className="form-options">
-                                <Link to="/reset-password" className="link-primary">
+                            <div className="flex items-center justify-between">
+                                <div></div>
+                                <Link to="/reset-password" className="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300">
                                     Forgot password?
                                 </Link>
                             </div>
 
                             <button
                                 type="submit"
-                                className="btn btn-primary btn-full"
                                 disabled={loading}
+                                className="w-full py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition disabled:opacity-50 font-medium flex items-center justify-center space-x-2"
                             >
                                 {loading ? (
                                     <>
-                                        <span className="spinner"></span>
-                                        Signing in...
+                                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                        <span>Signing in...</span>
                                     </>
                                 ) : (
                                     <>
                                         <i className="bi bi-box-arrow-in-right"></i>
-                                        Sign In
+                                        <span>Sign In</span>
                                     </>
                                 )}
                             </button>
-
-                            <div className="divider">
-                                <span>or</span>
-                            </div>
-
-                            <div className="auth-footer">
-                                <p>
-                                    Don't have an account? {' '}
-                                    <Link to="/signup" className="link-primary">
-                                        Create one
-                                    </Link>
-                                </p>
-                            </div>
                         </form>
 
-                        <div className="back-home">
-                            <Link to="/" className="link-secondary">
-                                <i className="bi bi-arrow-left"></i> Back to Home
+                        <div className="mt-6 text-center">
+                            <p className="text-neutral-600 dark:text-neutral-400">
+                                Don't have an account?{' '}
+                                <Link to="/signup" className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium">
+                                    Create one
+                                </Link>
+                            </p>
+                        </div>
+
+                        <div className="mt-6 text-center">
+                            <Link to="/" className="text-sm text-neutral-500 dark:text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-400 flex items-center justify-center space-x-2">
+                                <i className="bi bi-arrow-left"></i>
+                                <span>Back to Home</span>
                             </Link>
                         </div>
                     </div>
-                </main>
+                </div>
             </div>
         </div>
     );

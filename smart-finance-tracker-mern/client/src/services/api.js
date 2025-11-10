@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
@@ -26,9 +27,13 @@ api.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response?.status === 401) {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            window.location.href = '/session-timeout?reason=timeout';
+            const message = error.response?.data?.message || '';
+
+            if (message.includes('token') || message.includes('authorized')) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = '/session-timeout?reason=timeout';
+            }
         }
         return Promise.reject(error);
     }
