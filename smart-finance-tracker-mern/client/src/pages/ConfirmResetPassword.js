@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { resetPassword } from '../services/api';
@@ -13,8 +13,19 @@ function ConfirmResetPassword() {
     const { token } = useParams();
     const { isDark, toggleTheme } = useTheme();
 
+    useEffect(() => {
+        if (!token) {
+            console.error('No reset token provided');
+            toast.error('Invalid reset link');
+            navigate('/reset-password');
+        } else {
+            console.log('Reset token from URL:', token);
+        }
+    }, [token, navigate]);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log('Attempting password reset with token:', token);
 
         if (password.length < 8) {
             toast.error('Password must be at least 8 characters');
@@ -29,15 +40,24 @@ function ConfirmResetPassword() {
         setLoading(true);
 
         try {
+            console.log('Sending reset request');
             const response = await resetPassword(token, password);
+            console.log('Password reset successful:', response.data);
 
             if (response.data.success) {
-                localStorage.setItem('token', response.data.token);
-                localStorage.setItem('user', JSON.stringify(response.data.data.user));
+                // Auto-login after password reset
+                if (response.data.token) {
+                    localStorage.setItem('token', response.data.token);
+                    localStorage.setItem('user', JSON.stringify(response.data.data.user));
+                }
+
                 toast.success('Password reset successful!');
-                navigate('/dashboard');
+                setTimeout(() => {
+                    navigate('/dashboard');
+                }, 1500);
             }
         } catch (err) {
+            console.error('Password reset error:', err.response || err);
             toast.error(err.response?.data?.message || 'Failed to reset password. Token may be invalid or expired.');
         } finally {
             setLoading(false);

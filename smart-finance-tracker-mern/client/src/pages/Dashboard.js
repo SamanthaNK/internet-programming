@@ -159,15 +159,15 @@ function Dashboard() {
     const filteredCategories = categories.filter(cat => cat.type === formData.type);
 
     return (
-        <div className="min-h-screen flex flex-col bg-neutral-50 dark:bg-neutral-900">
+        <div className="min-h-screen flex flex-col bg-bg-primary dark:bg-neutral-900">
             <Navbar user={user} />
 
             <div className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
                     <div>
-                        <h1 className="text-3xl font-serif font-medium text-neutral-900 dark:text-neutral-100">Dashboard</h1>
-                        <p className="text-neutral-600 dark:text-neutral-400">Your financial overview</p>
+                        <h1 className="text-3xl font-serif font-medium text-accent-cafe dark:text-primary-light">Dashboard</h1>
+                        <p className="text-text-secondary dark:text-neutral-400">Your financial overview</p>
                     </div>
                     <button
                         onClick={() => {
@@ -181,7 +181,7 @@ function Dashboard() {
                             });
                             setShowModal(true);
                         }}
-                        className="flex items-center space-x-2 px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition shadow-md"
+                        className="flex items-center space-x-2 px-6 py-3 bg-primary-kombu dark:bg-primary-moss text-white rounded-lg hover:bg-primary-dark dark:hover:bg-primary-kombu transition-all duration-300 shadow-md"
                     >
                         <i className="bi bi-plus-circle"></i>
                         <span>Add Transaction</span>
@@ -189,16 +189,16 @@ function Dashboard() {
                 </div>
 
                 {/* Period Selector */}
-                <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-md p-6 mb-6">
-                    <h3 className="text-lg font-medium text-neutral-900 dark:text-neutral-100 mb-4">Time Period</h3>
+                <div className="bg-bg-card dark:bg-neutral-800 rounded-xl shadow-md p-6 mb-6 border border-border-primary dark:border-neutral-700">
+                    <h3 className="text-lg font-medium text-primary-kombu dark:text-primary-light mb-4">Time Period</h3>
                     <div className="flex flex-wrap gap-3">
                         {['month', 'year', 'all'].map(period => (
                             <button
                                 key={period}
                                 onClick={() => setSelectedPeriod(period)}
-                                className={`px-6 py-2 rounded-lg transition ${selectedPeriod === period
-                                    ? 'bg-primary-600 text-white'
-                                    : 'bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-600'
+                                className={`px-6 py-2 rounded-lg transition-all duration-300 ${selectedPeriod === period
+                                    ? 'bg-primary-kombu dark:bg-primary-moss text-white'
+                                    : 'bg-bg-secondary dark:bg-neutral-700 text-text-secondary dark:text-neutral-300 hover:bg-bg-overlay dark:hover:bg-neutral-600'
                                     }`}
                             >
                                 {period === 'month' ? 'This Month' : period === 'year' ? 'This Year' : 'All Time'}
@@ -209,76 +209,76 @@ function Dashboard() {
 
                 {/* Summary Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-md p-6 border-l-4 border-accent-sage">
-                        <h3 className="text-sm text-neutral-600 dark:text-neutral-400 uppercase mb-2">Total Income</h3>
-                        <div className="text-3xl font-serif font-medium text-accent-sage mb-2">
+                    <div className="bg-bg-card dark:bg-neutral-800 rounded-xl shadow-md p-6 border-l-4 border-accent-sage dark:border-green-600">
+                        <h3 className="text-sm text-text-secondary dark:text-neutral-400 uppercase mb-2 font-medium">Total Income</h3>
+                        <div className="text-3xl font-serif font-medium text-accent-sage dark:text-green-400 mb-2">
                             {user?.currency || 'XAF'} {formatCurrency(summary.totalIncome)}
                         </div>
-                        <p className="text-sm text-neutral-500 dark:text-neutral-400">{summary.incomeCount || 0} transactions</p>
+                        <p className="text-sm text-text-muted dark:text-neutral-400">{summary.incomeCount || 0} transactions</p>
                     </div>
 
-                    <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-md p-6 border-l-4 border-accent-terracotta">
-                        <h3 className="text-sm text-neutral-600 dark:text-neutral-400 uppercase mb-2">Total Expenses</h3>
-                        <div className="text-3xl font-serif font-medium text-accent-terracotta mb-2">
+                    <div className="bg-bg-card dark:bg-neutral-800 rounded-xl shadow-md p-6 border-l-4 border-accent-terracotta dark:border-red-600">
+                        <h3 className="text-sm text-text-secondary dark:text-neutral-400 uppercase mb-2 font-medium">Total Expenses</h3>
+                        <div className="text-3xl font-serif font-medium text-accent-terracotta dark:text-red-400 mb-2">
                             {user?.currency || 'XAF'} {formatCurrency(summary.totalExpense)}
                         </div>
-                        <p className="text-sm text-neutral-500 dark:text-neutral-400">{summary.expenseCount || 0} transactions</p>
+                        <p className="text-sm text-text-muted dark:text-neutral-400">{summary.expenseCount || 0} transactions</p>
                     </div>
 
-                    <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-md p-6 border-l-4 border-accent-seafoam">
-                        <h3 className="text-sm text-neutral-600 dark:text-neutral-400 uppercase mb-2">Balance</h3>
-                        <div className="text-3xl font-serif font-medium text-accent-seafoam mb-2">
+                    <div className="bg-bg-card dark:bg-neutral-800 rounded-xl shadow-md p-6 border-l-4 border-accent-seafoam dark:border-blue-600">
+                        <h3 className="text-sm text-text-secondary dark:text-neutral-400 uppercase mb-2 font-medium">Balance</h3>
+                        <div className="text-3xl font-serif font-medium text-accent-seafoam dark:text-blue-400 mb-2">
                             {user?.currency || 'XAF'} {formatCurrency(summary.balance)}
                         </div>
-                        <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                        <p className="text-sm text-text-muted dark:text-neutral-400">
                             {selectedPeriod === 'month' ? 'This month' : selectedPeriod === 'year' ? 'This year' : 'All time'}
                         </p>
                     </div>
                 </div>
 
                 {/* Recent Transactions */}
-                <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-md p-6">
-                    <h3 className="text-xl font-medium text-neutral-900 dark:text-neutral-100 mb-6">Recent Transactions</h3>
+                <div className="bg-bg-card dark:bg-neutral-800 rounded-xl shadow-md p-6 border border-border-primary dark:border-neutral-700">
+                    <h3 className="text-xl font-medium text-primary-kombu dark:text-primary-light mb-6">Recent Transactions</h3>
 
                     {recentTransactions.length === 0 ? (
                         <div className="text-center py-12">
-                            <i className="bi bi-inbox text-6xl text-neutral-300 dark:text-neutral-600 mb-4 block"></i>
-                            <p className="text-neutral-600 dark:text-neutral-400">No transactions yet</p>
-                            <p className="text-sm text-neutral-500 dark:text-neutral-500">Add your first transaction to get started!</p>
+                            <i className="bi bi-inbox text-6xl text-border-primary dark:text-neutral-600 mb-4 block"></i>
+                            <p className="text-text-secondary dark:text-neutral-400">No transactions yet</p>
+                            <p className="text-sm text-text-muted dark:text-neutral-500">Add your first transaction to get started!</p>
                         </div>
                     ) : (
                         <div className="space-y-3">
                             {recentTransactions.map(transaction => (
-                                <div key={transaction._id} className="flex items-center justify-between p-4 bg-neutral-50 dark:bg-neutral-700 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-600 transition">
+                                <div key={transaction._id} className="flex items-center justify-between p-4 bg-bg-secondary dark:bg-neutral-700 rounded-lg hover:bg-bg-overlay dark:hover:bg-neutral-600 transition-colors border border-border-primary dark:border-neutral-600">
                                     <div className="flex items-center space-x-4">
-                                        <div className={`w-12 h-12 rounded-full flex items-center justify-center ${transaction.type === 'income' ? 'bg-green-100 dark:bg-green-900' : 'bg-red-100 dark:bg-red-900'
+                                        <div className={`w-12 h-12 rounded-full flex items-center justify-center ${transaction.type === 'income' ? 'bg-accent-sage/20 dark:bg-green-900' : 'bg-accent-terracotta/20 dark:bg-red-900'
                                             }`}>
-                                            <i className={`bi ${transaction.type === 'income' ? 'bi-arrow-down-circle text-green-600 dark:text-green-400' : 'bi-arrow-up-circle text-red-600 dark:text-red-400'} text-xl`}></i>
+                                            <i className={`bi ${transaction.type === 'income' ? 'bi-arrow-down-circle text-accent-sage dark:text-green-400' : 'bi-arrow-up-circle text-accent-terracotta dark:text-red-400'} text-xl`}></i>
                                         </div>
                                         <div>
-                                            <div className="font-medium text-neutral-900 dark:text-neutral-100">{transaction.category?.name || 'Uncategorized'}</div>
+                                            <div className="font-medium text-text-primary dark:text-neutral-100">{transaction.category?.name || 'Uncategorized'}</div>
                                             {transaction.description && (
-                                                <div className="text-sm text-neutral-600 dark:text-neutral-400">{transaction.description}</div>
+                                                <div className="text-sm text-text-secondary dark:text-neutral-400">{transaction.description}</div>
                                             )}
-                                            <div className="text-xs text-neutral-500 dark:text-neutral-500">{formatDate(transaction.transactionDate)}</div>
+                                            <div className="text-xs text-text-muted dark:text-neutral-500">{formatDate(transaction.transactionDate)}</div>
                                         </div>
                                     </div>
                                     <div className="flex items-center space-x-4">
-                                        <div className={`text-lg font-semibold ${transaction.type === 'income' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                                        <div className={`text-lg font-semibold ${transaction.type === 'income' ? 'text-accent-sage dark:text-green-400' : 'text-accent-terracotta dark:text-red-400'}`}>
                                             {transaction.type === 'income' ? '+' : '-'}
                                             {user?.currency || 'XAF'} {formatCurrency(transaction.amount)}
                                         </div>
                                         <div className="flex space-x-2">
                                             <button
                                                 onClick={() => handleEdit(transaction)}
-                                                className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900 rounded-lg transition"
+                                                className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900 rounded-lg transition-colors"
                                                 title="Edit"
                                             >
                                                 <i className="bi bi-pencil"></i>
                                             </button>
                                             <button
                                                 onClick={() => handleDelete(transaction._id)}
-                                                className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900 rounded-lg transition"
+                                                className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900 rounded-lg transition-colors"
                                                 title="Delete"
                                             >
                                                 <i className="bi bi-trash"></i>
@@ -305,12 +305,12 @@ function Dashboard() {
             >
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">Type</label>
+                        <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">Type</label>
                         <select
                             name="type"
                             value={formData.type}
                             onChange={handleFormChange}
-                            className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                            className="w-full px-4 py-2 border border-border-primary dark:border-neutral-600 rounded-lg bg-bg-card dark:bg-neutral-700 text-text-primary dark:text-neutral-100 focus:ring-2 focus:ring-primary-moss focus:border-transparent"
                             required
                         >
                             <option value="income">Income</option>
@@ -319,13 +319,13 @@ function Dashboard() {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">Amount ({user?.currency || 'XAF'})</label>
+                        <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">Amount ({user?.currency || 'XAF'})</label>
                         <input
                             type="number"
                             name="amount"
                             value={formData.amount}
                             onChange={handleFormChange}
-                            className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                            className="w-full px-4 py-2 border border-border-primary dark:border-neutral-600 rounded-lg bg-bg-card dark:bg-neutral-700 text-text-primary dark:text-neutral-100 focus:ring-2 focus:ring-primary-moss focus:border-transparent"
                             placeholder="0.00"
                             min="0"
                             step="0.01"
@@ -334,13 +334,13 @@ function Dashboard() {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">Category</label>
+                        <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">Category</label>
                         <div className="flex space-x-2">
                             <select
                                 name="category"
                                 value={formData.category}
                                 onChange={handleFormChange}
-                                className="flex-1 px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                                className="flex-1 px-4 py-2 border border-border-primary dark:border-neutral-600 rounded-lg bg-bg-card dark:bg-neutral-700 text-text-primary dark:text-neutral-100 focus:ring-2 focus:ring-primary-moss focus:border-transparent"
                                 required
                             >
                                 <option value="">Select Category</option>
@@ -351,7 +351,7 @@ function Dashboard() {
                             <button
                                 type="button"
                                 onClick={() => setShowCategoryForm(!showCategoryForm)}
-                                className="px-4 py-2 bg-neutral-200 dark:bg-neutral-600 text-neutral-700 dark:text-neutral-300 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-500 transition"
+                                className="px-4 py-2 bg-bg-secondary dark:bg-neutral-600 text-text-primary dark:text-neutral-300 rounded-lg hover:bg-border-primary dark:hover:bg-neutral-500 transition-colors"
                             >
                                 {showCategoryForm ? 'Cancel' : '+ New'}
                             </button>
@@ -359,18 +359,18 @@ function Dashboard() {
                     </div>
 
                     {showCategoryForm && (
-                        <div className="p-4 bg-neutral-100 dark:bg-neutral-700 rounded-lg space-y-2">
+                        <div className="p-4 bg-bg-secondary dark:bg-neutral-700 rounded-lg space-y-2">
                             <input
                                 type="text"
                                 value={newCategory.name}
                                 onChange={(e) => setNewCategory({ name: e.target.value })}
                                 placeholder="Category name"
-                                className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100"
+                                className="w-full px-4 py-2 border border-border-primary dark:border-neutral-600 rounded-lg bg-bg-card dark:bg-neutral-800 text-text-primary dark:text-neutral-100 focus:ring-2 focus:ring-primary-moss focus:border-transparent"
                             />
                             <button
                                 type="button"
                                 onClick={handleCreateCategory}
-                                className="w-full px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition"
+                                className="w-full px-4 py-2 bg-primary-kombu dark:bg-primary-moss text-white rounded-lg hover:bg-primary-dark dark:hover:bg-primary-kombu transition-colors"
                             >
                                 Create Category
                             </button>
@@ -378,25 +378,25 @@ function Dashboard() {
                     )}
 
                     <div>
-                        <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">Date</label>
+                        <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">Date</label>
                         <input
                             type="date"
                             name="date"
                             value={formData.date}
                             onChange={handleFormChange}
-                            className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                            className="w-full px-4 py-2 border border-border-primary dark:border-neutral-600 rounded-lg bg-bg-card dark:bg-neutral-700 text-text-primary dark:text-neutral-100 focus:ring-2 focus:ring-primary-moss focus:border-transparent"
                             required
                         />
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">Description (Optional)</label>
+                        <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">Description (Optional)</label>
                         <input
                             type="text"
                             name="description"
                             value={formData.description}
                             onChange={handleFormChange}
-                            className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                            className="w-full px-4 py-2 border border-border-primary dark:border-neutral-600 rounded-lg bg-bg-card dark:bg-neutral-700 text-text-primary dark:text-neutral-100 focus:ring-2 focus:ring-primary-moss focus:border-transparent"
                             placeholder="e.g., Grocery shopping"
                         />
                     </div>
@@ -404,7 +404,7 @@ function Dashboard() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition disabled:opacity-50"
+                        className="w-full px-6 py-3 bg-primary-kombu dark:bg-primary-moss text-white rounded-lg hover:bg-primary-dark dark:hover:bg-primary-kombu transition-colors disabled:opacity-50"
                     >
                         {loading ? 'Saving...' : editingTransaction ? 'Update Transaction' : 'Add Transaction'}
                     </button>

@@ -31,37 +31,37 @@ function SessionTimeout() {
   const current = content[reason] || content.timeout;
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-neutral-50 dark:bg-neutral-900 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-bg-primary dark:bg-neutral-900 p-4">
       <div className="max-w-2xl w-full">
         <div className="flex justify-end mb-6">
           <button
             onClick={toggleTheme}
-            className="p-2 rounded-lg text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition"
+            className="p-2 rounded-lg text-text-secondary dark:text-neutral-400 hover:bg-bg-secondary dark:hover:bg-neutral-800 transition-colors"
           >
             <i className={`bi bi-${isDark ? 'sun' : 'moon'}-fill text-xl`}></i>
           </button>
         </div>
 
-        <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-xl p-12 text-center">
-          <div className="w-32 h-32 bg-primary-100 dark:bg-primary-900 rounded-full flex items-center justify-center mx-auto mb-8 animate-pulse">
-            <i className={`bi bi-${current.icon} text-6xl text-primary-600 dark:text-primary-400`}></i>
+        <div className="bg-bg-card dark:bg-neutral-800 rounded-2xl shadow-xl p-12 text-center border border-border-primary dark:border-neutral-700">
+          <div className="w-32 h-32 bg-primary-light dark:bg-primary-moss/20 rounded-full flex items-center justify-center mx-auto mb-8 animate-pulse">
+            <i className={`bi bi-${current.icon} text-6xl text-primary-moss dark:text-primary-light`}></i>
           </div>
 
-          <h1 className="text-4xl font-serif font-medium text-neutral-900 dark:text-neutral-100 mb-4">
+          <h1 className="text-4xl font-serif font-medium text-accent-cafe dark:text-primary-light mb-4">
             {current.title}
           </h1>
-          <p className="text-lg text-neutral-600 dark:text-neutral-400 mb-8 max-w-md mx-auto">
+          <p className="text-lg text-text-secondary dark:text-neutral-400 mb-8 max-w-md mx-auto">
             {current.message}
           </p>
 
-          <div className="bg-neutral-50 dark:bg-neutral-700 rounded-xl p-6 mb-8 text-left max-w-md mx-auto">
+          <div className="bg-bg-secondary dark:bg-neutral-700 rounded-xl p-6 mb-8 text-left max-w-md mx-auto border border-border-primary dark:border-neutral-600">
             <div className="flex items-start space-x-4">
-              <i className={`bi bi-${reason === 'timeout' ? 'info-circle' : 'shield-check'} text-3xl text-primary-600 dark:text-primary-400 flex-shrink-0`}></i>
+              <i className={`bi bi-${reason === 'timeout' ? 'info-circle' : 'shield-check'} text-3xl text-primary-moss dark:text-primary-light flex-shrink-0`}></i>
               <div>
-                <h3 className="text-lg font-medium text-neutral-900 dark:text-neutral-100 mb-2">
+                <h3 className="text-lg font-medium text-primary-kombu dark:text-primary-light mb-2">
                   {current.info.title}
                 </h3>
-                <p className="text-neutral-600 dark:text-neutral-400">
+                <p className="text-text-secondary dark:text-neutral-400">
                   {current.info.message}
                 </p>
               </div>
@@ -71,14 +71,14 @@ function SessionTimeout() {
           <div className="space-y-4">
             <Link
               to="/signin"
-              className="flex items-center justify-center space-x-2 w-full py-4 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition text-lg font-medium shadow-md"
+              className="flex items-center justify-center space-x-2 w-full py-4 bg-primary-kombu dark:bg-primary-moss text-white rounded-lg hover:bg-primary-dark dark:hover:bg-primary-kombu transition-all duration-300 text-lg font-medium shadow-md"
             >
               <i className="bi bi-box-arrow-in-right"></i>
               <span>Sign In Again</span>
             </Link>
             <Link
               to="/"
-              className="flex items-center justify-center space-x-2 w-full py-4 bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-600 transition text-lg font-medium"
+              className="flex items-center justify-center space-x-2 w-full py-4 bg-bg-secondary dark:bg-neutral-700 text-text-primary dark:text-neutral-300 rounded-lg hover:bg-bg-overlay dark:hover:bg-neutral-600 transition-all duration-300 text-lg font-medium border border-border-primary dark:border-neutral-600"
             >
               <i className="bi bi-house"></i>
               <span>Go to Home</span>

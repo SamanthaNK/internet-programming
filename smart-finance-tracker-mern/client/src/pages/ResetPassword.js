@@ -12,13 +12,22 @@ function ResetPassword() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log('Requesting password reset for:', email);
         setLoading(true);
 
         try {
-            await requestPasswordReset(email);
+            const response = await requestPasswordReset(email);
+            console.log('Reset request successful:', response.data);
+
             setSuccess(true);
             toast.success('Reset instructions sent!');
+
+            if (response.data.resetToken) {
+                console.log('Reset Token (DEV ONLY):', response.data.resetToken);
+                console.log('Reset URL:', `${window.location.origin}/reset-password/${response.data.resetToken}`);
+            }
         } catch (err) {
+            console.error('Reset request error:', err.response || err);
             toast.error(err.response?.data?.message || 'Failed to send reset email');
         } finally {
             setLoading(false);
