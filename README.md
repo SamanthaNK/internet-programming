@@ -1,40 +1,48 @@
-# internet-programming
-## Smart Finance Tracker Website
+# Smart Finance Tracker
 
 ### Overview:
-A web-based personal finance management application that helps users track expenses, manage budgets, and receive AI-powered financial insights.
+A web-based personal finance management application that helps users track expenses, manage budgets, set financial goals and receive AI-powered financial insights to improve your financial health.
 
 ### Features
-
-- **Dashboard** - Overview of income, expenses, and savings
-- **Transaction Management** - Add, edit, and categorize transactions
-- **Budget Planner** - Set monthly limits with AI suggestions
-- **Financial Goals** - Track savings goals and progress
-- **Reports & Analytics** - Visual charts and spending trends
-- **AI Advisor** - Personalized financial insights and recommendations
+- **User Authentication** - Secure JWT-based registration, login, and password reset
+- **Dashboard** - Real-time overview of income, expenses, balance, savings, and recent transactions
+- **Transaction Management** - Full CRUD operations with filtering, sorting, and search
+- **Budget Planner** - Set monthly limits per category with visual progress indicators
+- **Financial Goals** - Track savings goals and progress visualization
+- **Reports & Analytics** - Interactive charts showing spending trends and patterns
+- **AI Advisor** - Personalized financial recommendations and spending analysis
 - **Data Export** - Download financial data in CSV/PDF formats
+- **Settings** - Manage profile, change password, update preferences
 
 ### Tech Stack
 
-- **Frontend:** HTML5, CSS3, JavaScript
-- **Backend:** PHP, MySQL
-- **Libraries:** Chart.js (visualizations)
-- **AI Integration:** OpenAI/Claude/Gemini API
+#### Frontend
+- **React.js** - UI library
+- **React Router** - Client-side routing
+- **Tailwind CSS** - Styling
+- **Axios** - HTTP client
+- **React-Toastify** - Toast notifications
+- **Chart.js / Recharts** - Data visualizations
 
-### Project Structure
-```
-smart-finance-tracker/
-├── api/                    # Backend API endpoints
-├── assets/                 # CSS, JS, images, libraries
-├── auth/                   # Authentication processes
-├── config/                 # Database configuration
-├── database/               # SQL schema
-├── includes/               # Reusable PHP components
-├── pages/                  # Main application pages
-├── uploads/                # User uploaded files
-└── index.php               # Landing page
-```
+#### Backend
+- **Node.js** - Runtime environment
+- **Express.js** - Web framework
+- **MongoDB** - NoSQL database
+- **Mongoose** - MongoDB ODM
+- **JWT** - Authentication tokens
+- **Bcrypt.js** - Password hashing
 
+#### External Services
+- **AI API** - OpenAI/Claude/Gemini
+
+### Installation
+#### Prerequisites
+- Node.js (v16 or higher)
+- MongoDB (v5 or higher)
+- npm package manager
+- Git
+
+####  Clone Repository
 ### DB Setup Instructions
 
 1. Make sure MySQL is installed and running
