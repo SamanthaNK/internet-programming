@@ -42,17 +42,85 @@ A web-based personal finance management application that helps users track expen
 - npm package manager
 - Git
 
-####  Clone Repository
-### DB Setup Instructions
-
-1. Make sure MySQL is installed and running
-2. Create database and import schema:
+#### 1. Clone Repository
 ```bash
-   mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS financetrackerdb;" && mysql -u root -p financetrackerdb < FinanceTrackerDB.sql
+   git clone https://github.com/SamanthaNK/internet-programming.git
+   cd smart-finance-tracker-mern
 ```
-3. Update `config/db_connect.php` with your MySQL password
-4. Start server: `php -S localhost:8000`
-5. Open: http://localhost:8000
+#### 2. Backend Setup
+```bash
+   # Navigate to server directory
+   cd server
+
+   # Install dependencies
+   npm install
+
+   # Create .env file
+   touch .env
+
+   # Add environment variables (contact team)
+   # Start MongoDB
+   mongosh
+
+   # Seed default categories
+   node scripts/createDefaultCategories.js
+
+   # Start server
+   npm run dev
+```
+Server will run on http://localhost:5000
+
+#### 3. Frontend Setup
+```bash
+   # Open new terminal
+   # Navigate to client directory
+   cd client
+
+   # Install dependencies
+   npm install
+
+   # Create .env file
+   touch .env
+
+   # Add environment variables (contact team)
+
+   # Start development server
+   npm start
+```
+Client will run on http://localhost:3000
+
+### Project Structure
+
+```
+smart-finance-tracker/
+├── server/                          # Backend (Node.js + Express)
+│   ├── controllers/                 # Route controllers
+│   ├── middleware/                  # Custom middleware
+│   ├── models/                      # Mongoose schemas
+│   ├── routes/                      # API routes
+│   ├── scripts/                     # Utility scripts
+│   ├── server.js                    # Express app entry
+│   └── package.json                 # Backend dependencies
+│
+├── client/                          # Frontend (React)
+│   ├── public/                      # Static files
+│   ├── src/
+│   │   ├── components/              # Reusable components
+│   │   ├── context/                 # React Context
+│   │   ├── pages/                   # Page components
+│   │   ├── services/                # API services
+│   │   ├── App.js                   # Main app component
+│   │   ├── index.js                 # React entry point
+│   │   └── index.css                # Global styles (Tailwind)
+│   ├── package.json                 # Frontend dependencies
+│   └── tailwind.config.js           # Tailwind configuration
+│
+└── .gitignore                       # Git ignore file
+```
+### Team
+- Samantha Ngong   @SamanthaNK
+- Davida Assene   @Davibyte
+- Pearly Kusona   @Pearly-Kusona25
 
 ### Status:
 Project currently under development.
