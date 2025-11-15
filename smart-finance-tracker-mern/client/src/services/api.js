@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { toast } from 'react-toastify';
+import sessionManager from '../utils/sessionManager';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
@@ -10,11 +10,12 @@ const api = axios.create({
     }
 });
 
-// Add token to request headers
+// Add token to request headers and update activity
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem('token');
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
+        sessionManager.updateActivity();
     }
     return config;
 },
@@ -24,15 +25,18 @@ api.interceptors.request.use((config) => {
 
 // Handle response errors globally
 api.interceptors.response.use(
-    (response) => response,
+    (response) => {
+        // Update activity on successful response
+        sessionManager.updateActivity();
+        return response;
+    },
     (error) => {
         if (error.response?.status === 401) {
             const message = error.response?.data?.message || '';
 
             if (message.includes('token') || message.includes('authorized')) {
-                localStorage.removeItem('token');
-                localStorage.removeItem('user');
-                window.location.href = '/session-timeout?reason=timeout';
+                sessionManager.logout();
+                window.location.href = '/session-timeout?reason=unauthorized';
             }
         }
         return Promise.reject(error);
@@ -44,8 +48,15 @@ export const register = (name, email, password, currency = 'XAF') => {
     return api.post('/auth/register', { name, email, password, currency });
 };
 
-export const login = (email, password) => {
-    return api.post('/auth/login', { email, password });
+export const login = async (email, password) => {
+    const response = await api.post('/auth/login', { email, password });
+
+    // Store login timestamp and initialize session tracking
+    if (response.data.success && response.data.loginTimestamp) {
+        sessionManager.setLoginTimestamp(response.data.loginTimestamp);
+    }
+
+    return response;
 };
 
 export const getMe = () => {
@@ -56,8 +67,15 @@ export const requestPasswordReset = (email) => {
     return api.post('/auth/forgot-password', { email });
 };
 
-export const resetPassword = (token, password) => {
-    return api.post(`/auth/reset-password/${token}`, { password });
+export const resetPassword = async (token, password) => {
+    const response = await api.post(`/auth/reset-password/${token}`, { password });
+
+    // Initialize session tracking after password reset (auto-login)
+    if (response.data.success && response.data.loginTimestamp) {
+        sessionManager.setLoginTimestamp(response.data.loginTimestamp);
+    }
+
+    return response;
 };
 
 // Category functions
