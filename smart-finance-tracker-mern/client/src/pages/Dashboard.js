@@ -370,7 +370,6 @@ function Dashboard() {
                             <button
                                 type="button"
                                 onClick={handleCreateCategory}
-                                className="w-full px-4 py-2 bg-primary-kombu dark:bg-primary-moss text-white rounded-lg hover:bg-primary-dark dark:hover:bg-primary-kombu transition-colors"
                             >
                                 Create Category
                             </button>
@@ -404,7 +403,7 @@ function Dashboard() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full px-6 py-3 bg-primary-kombu dark:bg-primary-moss text-white rounded-lg hover:bg-primary-dark dark:hover:bg-primary-kombu transition-colors disabled:opacity-50"
+
                     >
                         {loading ? 'Saving...' : editingTransaction ? 'Update Transaction' : 'Add Transaction'}
                     </button>
