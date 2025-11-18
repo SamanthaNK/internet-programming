@@ -1,13 +1,13 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "",
+  "description": "Smart Finance Tracker Server",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js"
   },
-  "keywords": [],
+  "keywords": ["finance", "tracker"],
   "author": "CITEC_Group1",
   "license": "ISC",
   "dependencies": {
@@ -17,7 +17,8 @@
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.20.0",
-    "mongoose": "^8.19.3"
+    "mongoose": "^8.19.3",
+    "nodemailer": "^7.0.10"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"

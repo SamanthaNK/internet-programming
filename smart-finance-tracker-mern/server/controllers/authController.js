@@ -1,12 +1,98 @@
 const User = require('../models/userModel');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const nodemailer = require("nodemailer");
 
 // Create JWT token
 const createToken = (userId) => {
     return jwt.sign({ userId }, process.env.JWT_SECRET, {
         expiresIn: '30d'
     });
+};
+
+// Configure email transporter
+const createEmailTransporter = () => {
+    // For Gmail
+    return nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASSWORD
+        },
+        tls: {
+            rejectUnauthorized: false  // for development
+        }
+    });
+};
+
+// Send password reset email
+const sendResetEmail = async (email, resetUrl) => {
+    const transporter = createEmailTransporter();
+
+    const mailOptions = {
+        from: `"Finance Tracker" <${process.env.EMAIL_USER}>`,
+        to: email,
+        subject: 'Password Reset Request - Finance Tracker',
+        html: `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <style>
+                    body { font-family: 'Montserrat', Arial, sans-serif; line-height: 1.6; color: #2A2D22; }
+                    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                    .header { background: linear-gradient(135deg, #354024 0%, #889063 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+                    .content { background: #FDFDFB; padding: 30px; border: 1px solid #E5E3DA; border-top: none; border-radius: 0 0 10px 10px; }
+                    .button { display: inline-block; background: #354024; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; margin: 20px 0; font-weight: 500; }
+                    .button:hover { background: #2A3319; }
+                    .footer { text-align: center; margin-top: 30px; color: #8B8E82; font-size: 14px; }
+                    .warning { background: #FFF3CD; border-left: 4px solid #FFC107; padding: 15px; margin: 20px 0; border-radius: 4px; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1 style="margin: 0; font-family: 'Cormorant Garamond', serif;">🌳 Finance Tracker</h1>
+                        <p style="margin: 10px 0 0 0;">Password Reset Request</p>
+                    </div>
+                    <div class="content">
+                        <h2 style="color: #354024; font-family: 'Cormorant Garamond', serif;">Reset Your Password</h2>
+                        <p>You requested to reset your password for your Finance Tracker account.</p>
+                        <p>Click the button below to reset your password. This link will expire in <strong>10 minutes</strong>.</p>
+
+                        <div style="text-align: center;">
+                            <a href="${resetUrl}" class="button">Reset Password</a>
+                        </div>
+
+                        <p style="margin-top: 20px; font-size: 14px; color: #5F6355;">
+                            Or copy and paste this link into your browser:<br>
+                            <a href="${resetUrl}" style="color: #889063; word-break: break-all;">${resetUrl}</a>
+                        </p>
+
+                        <div class="warning">
+                            <strong>⚠️ Security Notice:</strong><br>
+                            If you didn't request this password reset, please ignore this email. Your password will remain unchanged.
+                        </div>
+
+                        <p style="margin-top: 30px; color: #8B8E82; font-size: 14px;">
+                            This is an automated email. Please do not reply to this message.
+                        </p>
+                    </div>
+                    <div class="footer">
+                        <p>© ${new Date().getFullYear()} Finance Tracker. All rights reserved.</p>
+                    </div>
+                </div>
+            </body>
+            </html>
+        `
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+        return true;
+    } catch (error) {
+        console.error('Email sending error:', error);
+        return false;
+    }
 };
 
 // REGISTER: Create new user
@@ -65,7 +151,7 @@ exports.register = async (req, res) => {
 };
 
 // LOGIN: Login user
-exports.login = async (req, res, next) => {
+exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
 
@@ -98,11 +184,13 @@ exports.login = async (req, res, next) => {
 
         // Generate token
         const token = createToken(user._id);
+        const loginTimestamp = Date.now();
 
         res.status(200).json({
             success: true,
             message: 'User logged in successfully',
             token,
+            loginTimestamp,
             data: {
                 user: {
                     id: user._id,
@@ -144,7 +232,7 @@ exports.getMe = async (req, res) => {
     }
 };
 
-// FORGOT PASSWORD: Generate reset token
+// FORGOT PASSWORD: Generate reset token and send email
 exports.forgotPassword = async (req, res) => {
     try {
         const { email } = req.body;
@@ -159,9 +247,10 @@ exports.forgotPassword = async (req, res) => {
         const user = await User.findOne({ email });
 
         if (!user) {
-            return res.status(404).json({
-                success: false,
-                message: 'No user found with that email'
+            // Don't reveal if user exists for security
+            return res.status(200).json({
+                success: true,
+                message: 'If an account exists with this email, a password reset link has been sent'
             });
         }
 
@@ -180,17 +269,25 @@ exports.forgotPassword = async (req, res) => {
         await user.save();
 
         // Create reset URL (frontend)
-        const resetUrl = `${req.protocol}://${req.get('host')}/reset-password/${resetToken}`;
+        const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password/${resetToken}`;
 
-        // Plan to send email with resetUrl here
-        // Just logging for now
-        console.log('Password Reset Link:', resetUrl);
-        console.log('Reset Token:', resetToken);
+        // Send email
+        const emailSent = await sendResetEmail(user.email, resetUrl);
+
+        if (!emailSent) {
+            user.resetPasswordToken = undefined;
+            user.resetPasswordExpire = undefined;
+            await user.save();
+
+            return res.status(500).json({
+                success: false,
+                message: 'Error sending password reset email. Please try again later.'
+            });
+        }
 
         res.status(200).json({
             success: true,
-            message: 'Password reset link sent to email',
-            resetToken: resetToken // for testing
+            message: 'If an account exists with this email, a password reset link has been sent'
         });
 
     } catch (error) {
@@ -249,6 +346,7 @@ exports.resetPassword = async (req, res) => {
 
         // Generate new token for automatic login
         const token = createToken(user._id);
+        const loginTimestamp = Date.now();
 
         res.status(200).json({
             success: true,
