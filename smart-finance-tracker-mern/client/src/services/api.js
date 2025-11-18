@@ -108,4 +108,29 @@ export const getSummaryStats = (period = 'month') => {
     return api.get('/transactions/summary', { params: { period } });
 };
 
+// Report functions
+export const getMonthlyReport = (year) => {
+    return api.get('/reports/monthly', { params: year ? { year } : {} });
+};
+
+export const getCategoryBreakdown = (period = 'month', type = 'expense') => {
+    return api.get('/reports/category', { params: { period, type } });
+};
+
+export const getSpendingTrends = (period = 'month', groupBy = 'day') => {
+    return api.get('/reports/trends', { params: { period, groupBy } });
+};
+
+export const getComparisonReport = () => {
+    return api.get('/reports/comparison');
+};
+
+export const getTopCategories = (period = 'month', limit = 5) => {
+    return api.get('/reports/top-categories', { params: { period, limit } });
+};
+
+export const getSpendingByDayOfWeek = (period = 'month') => {
+    return api.get('/reports/day-of-week', { params: { period } });
+};
+
 export default api;

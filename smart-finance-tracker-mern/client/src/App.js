@@ -12,6 +12,7 @@ import ResetPassword from './pages/ResetPassword';
 import ConfirmResetPassword from './pages/ConfirmResetPassword';
 import Dashboard from './pages/Dashboard';
 import Transactions from './pages/Transaction';
+import Reports from './pages/Reports';
 import SessionTimeout from './pages/SessionTimeout';
 
 const ProtectedRoute = ({ children }) => {
@@ -113,6 +114,14 @@ function App() {
                             element={
                                 <ProtectedRoute>
                                     <Transactions />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/reports"
+                            element={
+                                <ProtectedRoute>
+                                    <Reports />
                                 </ProtectedRoute>
                             }
                         />
