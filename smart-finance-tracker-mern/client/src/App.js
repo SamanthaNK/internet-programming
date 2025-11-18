@@ -118,6 +118,22 @@ function App() {
                                 </ProtectedRoute>
                             }
                         />
+                        <Route
+                            path="/reports"
+                            element={
+                                <ProtectedRoute>
+                                    <Reports />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/budgets"
+                            element={
+                                <ProtectedRoute>
+                                    <Budget />
+                                </ProtectedRoute>
+                            }
+                        />
 
                         {/* 404 - Catch all */}
                         <Route path="*" element={<Navigate to="/" replace />} />

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { exportToCSV, exportToPDF } from '../services/api';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -25,7 +26,6 @@ import {
     getSpendingByDayOfWeek
 } from '../services/api';
 
-// Register ChartJS components
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -38,11 +38,88 @@ ChartJS.register(
     Legend
 );
 
+const CHART_COLORS = {
+    income: '#7FB069',
+    expense: '#E07A5F',
+    balance: '#81B29A',
+    categories: [
+        '#D4A373',
+        '#B5838D',
+        '#8B9D77',
+        '#C89F71',
+        '#9B7E6B',
+        '#A89F91',
+        '#BC9B7D',
+        '#7D8570',
+        '#B89B7F',
+        '#8E7A6B',
+    ],
+    trends: '#D08C60',
+    bars: '#9AAE7E',
+};
+
+const getChartOptions = (title) => ({
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+        legend: {
+            display: true,
+            position: 'top',
+            labels: {
+                color: document.documentElement.classList.contains('dark') ? '#D1D5DB' : '#2A2D22',
+                font: { size: 12, weight: '500' },
+                padding: 15,
+                usePointStyle: true,
+                pointStyle: 'circle'
+            }
+        },
+        tooltip: {
+            backgroundColor: 'rgba(42, 45, 34, 0.95)',
+            titleColor: '#E8EFE0',
+            bodyColor: '#D1D5DB',
+            borderColor: '#889063',
+            borderWidth: 1,
+            padding: 12,
+            displayColors: true,
+            boxPadding: 6
+        },
+        title: {
+            display: true,
+            text: title,
+            color: document.documentElement.classList.contains('dark') ? '#E8EFE0' : '#354024',
+            font: { size: 16, weight: '500' }
+        }
+    },
+    scales: {
+        y: {
+            ticks: {
+                color: document.documentElement.classList.contains('dark') ? '#9CA3AF' : '#5F6355',
+                font: { size: 11 }
+            },
+            grid: {
+                color: document.documentElement.classList.contains('dark') ? '#374151' : '#E5E3DA',
+                lineWidth: 1
+            }
+        },
+        x: {
+            ticks: {
+                color: document.documentElement.classList.contains('dark') ? '#9CA3AF' : '#5F6355',
+                font: { size: 11 }
+            },
+            grid: {
+                color: document.documentElement.classList.contains('dark') ? '#374151' : '#E5E3DA',
+                lineWidth: 1
+            }
+        }
+    }
+});
+
 function Reports() {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [selectedPeriod, setSelectedPeriod] = useState('month');
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+    const [exporting, setExporting] = useState(false);
 
     // Data states
     const [monthlyData, setMonthlyData] = useState(null);
@@ -96,37 +173,54 @@ function Reports() {
         return amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     };
 
-    // Chart configurations
-    const getChartOptions = (title) => ({
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                display: true,
-                position: 'top',
-                labels: {
-                    color: document.documentElement.classList.contains('dark') ? '#D1D5DB' : '#2A2D22',
-                    font: { size: 12 }
-                }
-            },
-            title: {
-                display: true,
-                text: title,
-                color: document.documentElement.classList.contains('dark') ? '#E8EFE0' : '#354024',
-                font: { size: 16, weight: '500' }
-            }
-        },
-        scales: {
-            y: {
-                ticks: { color: document.documentElement.classList.contains('dark') ? '#9CA3AF' : '#5F6355' },
-                grid: { color: document.documentElement.classList.contains('dark') ? '#374151' : '#E5E3DA' }
-            },
-            x: {
-                ticks: { color: document.documentElement.classList.contains('dark') ? '#9CA3AF' : '#5F6355' },
-                grid: { color: document.documentElement.classList.contains('dark') ? '#374151' : '#E5E3DA' }
-            }
+    // Export CSV
+    const handleExportCSV = () => {
+        if (!categoryData || categoryData.categories.length === 0) {
+            toast.error('No data to export');
+            return;
         }
-    });
+
+        setExporting(true);
+
+        try {
+            // CSV Header
+            let csv = 'Category,Amount,Transactions,Percentage\n';
+
+            // CSV Data
+            categoryData.categories.forEach(cat => {
+                csv += `${cat.category},${cat.amount},${cat.count},${cat.percentage}%\n`;
+            });
+
+            // Add summary
+            csv += '\nSummary\n';
+            csv += `Total Expenses,${categoryData.total}\n`;
+            csv += `Total Transactions,${categoryData.transactionCount}\n`;
+            csv += `Period,${selectedPeriod}\n`;
+
+            // Create download
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `financial-report-${selectedPeriod}-${Date.now()}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+
+            toast.success('Report exported successfully');
+        } catch (error) {
+            toast.error('Error exporting report');
+            console.error('Export error:', error);
+        } finally {
+            setExporting(false);
+        }
+    };
+
+    // Export PDF
+    const handleExportPDF = () => {
+        toast.info('PDF export feature coming soon!');
+    };
 
     // Monthly Income vs Expense Chart
     const monthlyChartData = monthlyData ? {
@@ -135,16 +229,20 @@ function Reports() {
             {
                 label: 'Income',
                 data: monthlyData.months.map(m => m.income),
-                borderColor: '#A8B89E',
-                backgroundColor: 'rgba(168, 184, 158, 0.2)',
-                tension: 0.3
+                borderColor: CHART_COLORS.income,
+                backgroundColor: `${CHART_COLORS.income}20`,
+                tension: 0.4,
+                fill: true,
+                borderWidth: 2
             },
             {
                 label: 'Expenses',
                 data: monthlyData.months.map(m => m.expense),
-                borderColor: '#C88B7A',
-                backgroundColor: 'rgba(200, 139, 122, 0.2)',
-                tension: 0.3
+                borderColor: CHART_COLORS.expense,
+                backgroundColor: `${CHART_COLORS.expense}20`,
+                tension: 0.4,
+                fill: true,
+                borderWidth: 2
             }
         ]
     } : null;
@@ -154,17 +252,10 @@ function Reports() {
         labels: categoryData.categories.map(c => c.category),
         datasets: [{
             data: categoryData.categories.map(c => c.amount),
-            backgroundColor: [
-                '#889063', // primary-moss
-                '#A8B89E', // accent-sage
-                '#CFBB99', // accent-tan
-                '#C88B7A', // accent-terracotta
-                '#B8D4D0', // accent-seafoam
-                '#E5D7C4', // accent-bone
-                '#A8A99D', // text-light
-            ],
+            backgroundColor: CHART_COLORS.categories.slice(0, categoryData.categories.length),
             borderWidth: 2,
-            borderColor: document.documentElement.classList.contains('dark') ? '#1F2937' : '#FFFFFF'
+            borderColor: document.documentElement.classList.contains('dark') ? '#1F2937' : '#FFFFFF',
+            hoverOffset: 8
         }]
     } : null;
 
@@ -174,10 +265,16 @@ function Reports() {
         datasets: [{
             label: 'Daily Spending',
             data: trendsData.trends.map(t => t.expense),
-            borderColor: '#C88B7A',
-            backgroundColor: 'rgba(200, 139, 122, 0.1)',
-            tension: 0.3,
-            fill: true
+            borderColor: CHART_COLORS.trends,
+            backgroundColor: `${CHART_COLORS.trends}15`,
+            tension: 0.4,
+            fill: true,
+            borderWidth: 2,
+            pointRadius: 4,
+            pointBackgroundColor: CHART_COLORS.trends,
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
+            pointHoverRadius: 6
         }]
     } : null;
 
@@ -187,9 +284,10 @@ function Reports() {
         datasets: [{
             label: 'Total Spent',
             data: topCategories.categories.map(c => c.total),
-            backgroundColor: '#889063',
-            borderColor: '#354024',
-            borderWidth: 1
+            backgroundColor: topCategories.categories.map((_, i) => CHART_COLORS.categories[i % CHART_COLORS.categories.length]),
+            borderColor: topCategories.categories.map((_, i) => CHART_COLORS.categories[i % CHART_COLORS.categories.length]),
+            borderWidth: 1,
+            borderRadius: 4
         }]
     } : null;
 
@@ -199,11 +297,13 @@ function Reports() {
         datasets: [{
             label: 'Average Spending',
             data: dayOfWeekData.days.map(d => d.average),
-            backgroundColor: '#A8B89E',
+            backgroundColor: CHART_COLORS.bars,
             borderColor: '#354024',
-            borderWidth: 1
+            borderWidth: 1,
+            borderRadius: 4
         }]
     } : null;
+
 
     if (loading) {
         return (
@@ -246,8 +346,8 @@ function Reports() {
                                 key={period}
                                 onClick={() => setSelectedPeriod(period)}
                                 className={`px-6 py-2 rounded-lg transition-all duration-300 ${selectedPeriod === period
-                                        ? 'bg-primary-kombu dark:bg-primary-moss text-white'
-                                        : 'bg-bg-secondary dark:bg-neutral-700 text-text-secondary dark:text-neutral-300 hover:bg-bg-overlay dark:hover:bg-neutral-600'
+                                    ? 'bg-primary-kombu dark:bg-primary-moss text-white shadow-md'
+                                    : 'bg-bg-secondary dark:bg-neutral-700 text-text-secondary dark:text-neutral-300 hover:bg-bg-overlay dark:hover:bg-neutral-600'
                                     }`}
                             >
                                 {period === 'week' ? 'Last Week' : period === 'month' ? 'This Month' : 'This Year'}
@@ -259,46 +359,46 @@ function Reports() {
                 {/* Comparison Cards */}
                 {comparisonData && (
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                        <div className="bg-bg-card dark:bg-neutral-800 rounded-xl shadow-md p-6 border border-border-primary dark:border-neutral-700">
+                        <div className="bg-bg-card dark:bg-neutral-800 rounded-xl shadow-md p-6 border border-border-primary dark:border-neutral-700 hover:shadow-lg transition-shadow">
                             <h3 className="text-sm text-text-secondary dark:text-neutral-400 uppercase mb-2 font-medium">
                                 Income Change
                             </h3>
                             <div className="flex items-baseline space-x-2">
-                                <div className="text-3xl font-serif font-medium text-accent-sage dark:text-green-400">
+                                <div className="text-3xl font-serif font-medium" style={{ color: CHART_COLORS.income }}>
                                     {comparisonData.changes.income >= 0 ? '+' : ''}
                                     {comparisonData.changes.income}%
                                 </div>
-                                <i className={`bi bi-arrow-${comparisonData.changes.income >= 0 ? 'up' : 'down'} text-xl ${comparisonData.changes.income >= 0 ? 'text-accent-sage dark:text-green-400' : 'text-accent-terracotta dark:text-red-400'
-                                    }`}></i>
+                                <i className={`bi bi-arrow-${comparisonData.changes.income >= 0 ? 'up' : 'down'} text-xl`}
+                                    style={{ color: comparisonData.changes.income >= 0 ? CHART_COLORS.income : CHART_COLORS.expense }}></i>
                             </div>
                             <p className="text-sm text-text-muted dark:text-neutral-400 mt-2">
                                 vs last month
                             </p>
                         </div>
 
-                        <div className="bg-bg-card dark:bg-neutral-800 rounded-xl shadow-md p-6 border border-border-primary dark:border-neutral-700">
+                        <div className="bg-bg-card dark:bg-neutral-800 rounded-xl shadow-md p-6 border border-border-primary dark:border-neutral-700 hover:shadow-lg transition-shadow">
                             <h3 className="text-sm text-text-secondary dark:text-neutral-400 uppercase mb-2 font-medium">
                                 Expense Change
                             </h3>
                             <div className="flex items-baseline space-x-2">
-                                <div className="text-3xl font-serif font-medium text-accent-terracotta dark:text-red-400">
+                                <div className="text-3xl font-serif font-medium" style={{ color: CHART_COLORS.expense }}>
                                     {comparisonData.changes.expense >= 0 ? '+' : ''}
                                     {comparisonData.changes.expense}%
                                 </div>
-                                <i className={`bi bi-arrow-${comparisonData.changes.expense >= 0 ? 'up' : 'down'} text-xl ${comparisonData.changes.expense >= 0 ? 'text-accent-terracotta dark:text-red-400' : 'text-accent-sage dark:text-green-400'
-                                    }`}></i>
+                                <i className={`bi bi-arrow-${comparisonData.changes.expense >= 0 ? 'up' : 'down'} text-xl`}
+                                    style={{ color: comparisonData.changes.expense >= 0 ? CHART_COLORS.expense : CHART_COLORS.income }}></i>
                             </div>
                             <p className="text-sm text-text-muted dark:text-neutral-400 mt-2">
                                 vs last month
                             </p>
                         </div>
 
-                        <div className="bg-bg-card dark:bg-neutral-800 rounded-xl shadow-md p-6 border border-border-primary dark:border-neutral-700">
+                        <div className="bg-bg-card dark:bg-neutral-800 rounded-xl shadow-md p-6 border border-border-primary dark:border-neutral-700 hover:shadow-lg transition-shadow">
                             <h3 className="text-sm text-text-secondary dark:text-neutral-400 uppercase mb-2 font-medium">
                                 Savings Rate
                             </h3>
                             <div className="flex items-baseline space-x-2">
-                                <div className="text-3xl font-serif font-medium text-accent-seafoam dark:text-blue-400">
+                                <div className="text-3xl font-serif font-medium" style={{ color: CHART_COLORS.balance }}>
                                     {comparisonData.current.savingsRate}%
                                 </div>
                             </div>
@@ -314,7 +414,7 @@ function Reports() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                     {/* Monthly Income vs Expense */}
                     {monthlyChartData && (
-                        <div className="bg-bg-card dark:bg-neutral-800 rounded-xl shadow-md p-6 border border-border-primary dark:border-neutral-700">
+                        <div className="bg-bg-card dark:bg-neutral-800 rounded-xl shadow-md p-6 border border-border-primary dark:border-neutral-700 hover:shadow-lg transition-shadow">
                             <div className="flex justify-between items-center mb-4">
                                 <h3 className="text-lg font-medium text-primary-kombu dark:text-primary-light">
                                     Monthly Overview
@@ -338,7 +438,7 @@ function Reports() {
 
                     {/* Category Breakdown */}
                     {categoryChartData && (
-                        <div className="bg-bg-card dark:bg-neutral-800 rounded-xl shadow-md p-6 border border-border-primary dark:border-neutral-700">
+                        <div className="bg-bg-card dark:bg-neutral-800 rounded-xl shadow-md p-6 border border-border-primary dark:border-neutral-700 hover:shadow-lg transition-shadow">
                             <h3 className="text-lg font-medium text-primary-kombu dark:text-primary-light mb-4">
                                 Spending by Category
                             </h3>
@@ -363,7 +463,7 @@ function Reports() {
 
                     {/* Spending Trends */}
                     {trendsChartData && (
-                        <div className="bg-bg-card dark:bg-neutral-800 rounded-xl shadow-md p-6 border border-border-primary dark:border-neutral-700">
+                        <div className="bg-bg-card dark:bg-neutral-800 rounded-xl shadow-md p-6 border border-border-primary dark:border-neutral-700 hover:shadow-lg transition-shadow">
                             <h3 className="text-lg font-medium text-primary-kombu dark:text-primary-light mb-4">
                                 Spending Trends
                             </h3>
@@ -375,7 +475,7 @@ function Reports() {
 
                     {/* Top Categories */}
                     {topCategoriesChartData && (
-                        <div className="bg-bg-card dark:bg-neutral-800 rounded-xl shadow-md p-6 border border-border-primary dark:border-neutral-700">
+                        <div className="bg-bg-card dark:bg-neutral-800 rounded-xl shadow-md p-6 border border-border-primary dark:border-neutral-700 hover:shadow-lg transition-shadow">
                             <h3 className="text-lg font-medium text-primary-kombu dark:text-primary-light mb-4">
                                 Top Spending Categories
                             </h3>
@@ -394,7 +494,7 @@ function Reports() {
 
                 {/* Day of Week Analysis */}
                 {dayOfWeekChartData && (
-                    <div className="bg-bg-card dark:bg-neutral-800 rounded-xl shadow-md p-6 border border-border-primary dark:border-neutral-700 mb-8">
+                    <div className="bg-bg-card dark:bg-neutral-800 rounded-xl shadow-md p-6 border border-border-primary dark:border-neutral-700 hover:shadow-lg transition-shadow mb-8">
                         <h3 className="text-lg font-medium text-primary-kombu dark:text-primary-light mb-4">
                             Spending by Day of Week
                         </h3>
@@ -406,7 +506,7 @@ function Reports() {
 
                 {/* Summary Table */}
                 {topCategories && topCategories.categories.length > 0 && (
-                    <div className="bg-bg-card dark:bg-neutral-800 rounded-xl shadow-md p-6 border border-border-primary dark:border-neutral-700">
+                    <div className="bg-bg-card dark:bg-neutral-800 rounded-xl shadow-md p-6 border border-border-primary dark:border-neutral-700 hover:shadow-lg transition-shadow">
                         <h3 className="text-lg font-medium text-primary-kombu dark:text-primary-light mb-4">
                             Detailed Breakdown
                         </h3>
@@ -432,6 +532,7 @@ function Reports() {
                                     {topCategories.categories.map((cat, index) => (
                                         <tr key={index} className="border-b border-border-primary dark:border-neutral-700 hover:bg-bg-secondary dark:hover:bg-neutral-700 transition-colors">
                                             <td className="py-3 px-4 text-text-primary dark:text-neutral-100">
+                                                <span className="inline-block w-3 h-3 rounded-full mr-2" style={{ backgroundColor: CHART_COLORS.categories[index % CHART_COLORS.categories.length] }}></span>
                                                 {cat.category}
                                             </td>
                                             <td className="py-3 px-4 text-right text-text-secondary dark:text-neutral-400">
@@ -453,7 +554,7 @@ function Reports() {
 
                 {/* Empty State */}
                 {(!categoryData || categoryData.categories.length === 0) && (
-                    <div className="bg-bg-card dark:bg-neutral-800 rounded-xl shadow-md p-12 border border-border-primary dark:border-neutral-700 text-center">
+                    <div className="bg-bg-card dark:bg-neutral-800 rounded-xl shadow-md p-12 border border-border-primary dark:border-neutral-700 text-center hover:shadow-lg transition-shadow">
                         <i className="bi bi-graph-up text-6xl text-border-primary dark:text-neutral-600 mb-4 block"></i>
                         <h3 className="text-xl font-medium text-text-primary dark:text-neutral-100 mb-2">
                             No Data Available
@@ -463,7 +564,7 @@ function Reports() {
                         </p>
                         <button
                             onClick={() => navigate('/transactions')}
-                            className="px-6 py-3 bg-primary-kombu dark:bg-primary-moss text-white rounded-lg hover:bg-primary-dark dark:hover:bg-primary-kombu transition-colors"
+                            className="px-6 py-3 bg-primary-kombu dark:bg-primary-moss text-white rounded-lg hover:bg-primary-dark dark:hover:bg-primary-kombu transition-colors shadow-md hover:shadow-lg"
                         >
                             Add Transactions
                         </button>

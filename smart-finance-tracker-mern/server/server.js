@@ -19,7 +19,7 @@ app.use(cors());
 app.use(express.json());
 
 // Connecting to MongoDB
-mongoose.connect(process.env.MONGODB_URI)
+mongoose.connect(process.env.MONGODB_URL)
     .then(() => console.log('MongoDB connected successfully'))
     .catch((err) => {
         console.error('MongoDB connection error:', err);
@@ -35,6 +35,8 @@ app.get('/', (req, res) => {
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/transactions', require('./routes/transactionRoutes'));
 app.use('/api/categories', require('./routes/categoryRoutes'));
+app.use('/api/reports', require('./routes/reportRoutes'));
+app.use('/api/budgets', require('./routes/budgetRoutes'));
 
 
 // Start server

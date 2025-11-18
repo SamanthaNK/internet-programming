@@ -108,4 +108,63 @@ export const getSummaryStats = (period = 'month') => {
     return api.get('/transactions/summary', { params: { period } });
 };
 
+// Report functions
+export const getMonthlyReport = (year) => {
+    return api.get('/reports/monthly', { params: year ? { year } : {} });
+};
+
+export const getCategoryBreakdown = (period = 'month', type = 'expense') => {
+    return api.get('/reports/category', { params: { period, type } });
+};
+
+export const getSpendingTrends = (period = 'month', groupBy = 'day') => {
+    return api.get('/reports/trends', { params: { period, groupBy } });
+};
+
+export const getComparisonReport = () => {
+    return api.get('/reports/comparison');
+};
+
+export const getTopCategories = (period = 'month', limit = 5) => {
+    return api.get('/reports/top-categories', { params: { period, limit } });
+};
+
+export const getSpendingByDayOfWeek = (period = 'month') => {
+    return api.get('/reports/day-of-week', { params: { period } });
+};
+
+// Budget functions
+export const getBudgets = (month) => {
+    return api.get('/budgets', { params: month ? { month } : {} });
+};
+export const createBudget = (data) => {
+    return api.post('/budgets', data);
+};
+
+export const updateBudget = (id, data) => {
+    return api.put(`/budgets/${id}`, data);
+};
+
+export const deleteBudget = (id) => {
+    return api.delete(`/budgets/${id}`);
+};
+
+export const getBudgetRecommendations = () => {
+    return api.get('/budgets/recommendations');
+};
+
+// Template functions
+export const getTemplates = () => {
+    return api.get('/budgets/templates');
+};
+export const createTemplate = (payload) => {
+    return api.post('/budgets/templates', payload);
+};
+export const applyTemplate = (name, month) => {
+    return api.post(`/budgets/templates/${encodeURIComponent(name)}/apply`, { month });
+};
+export const deleteTemplate = (name) => {
+    return api.delete(`/budgets/templates/${encodeURIComponent(name)}`);
+};
+
 export default api;

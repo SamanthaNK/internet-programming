@@ -4,19 +4,10 @@ import { useTheme } from '../context/ThemeContext';
 
 function Navbar({ user }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [showUserMenu, setShowUserMenu] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
     const { isDark, toggleTheme } = useTheme();
-    const [currentUser, setCurrentUser] = useState(user || null);
-
-    React.useEffect(() => {
-        if (!user) {
-            const u = localStorage.getItem('user');
-            if (u) setCurrentUser(JSON.parse(u));
-        } else {
-            setCurrentUser(user);
-        }
-    }, [user]);
 
     const handleLogout = () => {
         localStorage.removeItem('token');
@@ -40,13 +31,13 @@ function Navbar({ user }) {
                     </Link>
 
                     {/* Desktop Navigation */}
-                    {currentUser ? (
-                        <div className="hidden md:flex items-center space-x-2">
+                    {user ? (
+                        <div className="hidden md:flex items-center space-x-1">
                             <Link
                                 to="/dashboard"
-                                className={`flex items-center space-x-2 px-5 py-2.5 rounded-lg transition-all duration-300 text-[0.9rem] tracking-wide ${isActive('/dashboard')
-                                        ? 'bg-primary-light dark:bg-primary-moss text-primary-kombu dark:text-white font-medium'
-                                        : 'text-text-secondary dark:text-neutral-400 hover:bg-bg-secondary dark:hover:bg-neutral-700 hover:text-primary-kombu dark:hover:text-neutral-200'
+                                className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-300 text-[0.9rem] tracking-wide ${isActive('/dashboard')
+                                    ? 'bg-primary-light dark:bg-primary-moss text-primary-kombu dark:text-white font-medium'
+                                    : 'text-text-secondary dark:text-neutral-400 hover:bg-bg-secondary dark:hover:bg-neutral-700 hover:text-primary-kombu dark:hover:text-neutral-200'
                                     }`}
                             >
                                 <i className="bi bi-speedometer2 opacity-70"></i>
@@ -54,7 +45,7 @@ function Navbar({ user }) {
                             </Link>
                             <Link
                                 to="/transactions"
-                                className={`flex items-center space-x-2 px-5 py-2.5 rounded-lg transition-all duration-300 text-[0.9rem] tracking-wide ${isActive('/transactions')
+                                className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-300 text-[0.9rem] tracking-wide ${isActive('/transactions')
                                     ? 'bg-primary-light dark:bg-primary-moss text-primary-kombu dark:text-white font-medium'
                                     : 'text-text-secondary dark:text-neutral-400 hover:bg-bg-secondary dark:hover:bg-neutral-700 hover:text-primary-kombu dark:hover:text-neutral-200'
                                     }`}
@@ -64,13 +55,33 @@ function Navbar({ user }) {
                             </Link>
                             <Link
                                 to="/budgets"
-                                className={`flex items-center space-x-2 px-5 py-2.5 rounded-lg transition-all duration-300 text-[0.9rem] tracking-wide ${isActive('/budgets')
+                                className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-300 text-[0.9rem] tracking-wide ${isActive('/budgets')
                                     ? 'bg-primary-light dark:bg-primary-moss text-primary-kombu dark:text-white font-medium'
                                     : 'text-text-secondary dark:text-neutral-400 hover:bg-bg-secondary dark:hover:bg-neutral-700 hover:text-primary-kombu dark:hover:text-neutral-200'
                                     }`}
                             >
                                 <i className="bi bi-pie-chart-fill opacity-70"></i>
                                 <span>Budgets</span>
+                            </Link>
+                            <Link
+                                to="/goals"
+                                className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-300 text-[0.9rem] tracking-wide ${isActive('/goals')
+                                    ? 'bg-primary-light dark:bg-primary-moss text-primary-kombu dark:text-white font-medium'
+                                    : 'text-text-secondary dark:text-neutral-400 hover:bg-bg-secondary dark:hover:bg-neutral-700 hover:text-primary-kombu dark:hover:text-neutral-200'
+                                    }`}
+                            >
+                                <i className="bi bi-bullseye opacity-70"></i>
+                                <span>Goals</span>
+                            </Link>
+                            <Link
+                                to="/reports"
+                                className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-300 text-[0.9rem] tracking-wide ${isActive('/reports')
+                                    ? 'bg-primary-light dark:bg-primary-moss text-primary-kombu dark:text-white font-medium'
+                                    : 'text-text-secondary dark:text-neutral-400 hover:bg-bg-secondary dark:hover:bg-neutral-700 hover:text-primary-kombu dark:hover:text-neutral-200'
+                                    }`}
+                            >
+                                <i className="bi bi-graph-up opacity-70"></i>
+                                <span>Reports & Analytics</span>
                             </Link>
 
                             {/* Dark Mode Toggle */}
@@ -82,19 +93,41 @@ function Navbar({ user }) {
                                 <i className={`bi bi-${isDark ? 'sun' : 'moon'}-fill text-xl`}></i>
                             </button>
 
-                            {/* User Info */}
-                            <span className="text-[0.85rem] text-text-secondary dark:text-neutral-400 ml-2 font-light pl-4">
-                                Welcome back, {currentUser?.name}
-                            </span>
+                            {/* User Menu */}
+                            <div className="relative ml-2">
+                                <button
+                                    onClick={() => setShowUserMenu(!showUserMenu)}
+                                    className="flex items-center space-x-2 px-4 py-2.5 rounded-lg text-text-secondary dark:text-neutral-400 hover:bg-bg-secondary dark:hover:bg-neutral-700 transition-all duration-300"
+                                >
+                                    <i className="bi bi-person-circle text-xl"></i>
+                                    <span className="text-[0.85rem]">{user.name}</span>
+                                    <i className={`bi bi-chevron-${showUserMenu ? 'up' : 'down'} text-xs`}></i>
+                                </button>
 
-                            {/* Logout Button */}
-                            <button
-                                onClick={handleLogout}
-                                className="flex items-center space-x-2 px-6 py-2.5 ml-2 bg-accent-tan dark:bg-neutral-700 text-text-primary dark:text-neutral-300 rounded-lg hover:bg-primary-moss hover:text-white dark:hover:bg-neutral-600 transition-all duration-400 text-[0.95rem] tracking-wide shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
-                            >
-                                <i className="bi bi-box-arrow-right"></i>
-                                <span>Logout</span>
-                            </button>
+                                {showUserMenu && (
+                                    <div className="absolute right-0 mt-2 w-48 bg-bg-card dark:bg-neutral-800 rounded-lg shadow-xl border border-border-primary dark:border-neutral-700 py-2 z-50">
+                                        <Link
+                                            to="/settings"
+                                            onClick={() => setShowUserMenu(false)}
+                                            className="flex items-center space-x-2 px-4 py-2 text-text-secondary dark:text-neutral-400 hover:bg-bg-secondary dark:hover:bg-neutral-700 transition-all"
+                                        >
+                                            <i className="bi bi-gear"></i>
+                                            <span>Settings</span>
+                                        </Link>
+                                        <div className="border-t border-border-primary dark:border-neutral-700 my-2"></div>
+                                        <button
+                                            onClick={() => {
+                                                handleLogout();
+                                                setShowUserMenu(false);
+                                            }}
+                                            className="flex items-center space-x-2 w-full px-4 py-2 text-accent-terracotta dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all"
+                                        >
+                                            <i className="bi bi-box-arrow-right"></i>
+                                            <span>Logout</span>
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     ) : (
                         <div className="hidden md:flex items-center space-x-4">
@@ -170,6 +203,39 @@ function Navbar({ user }) {
                                     <i className="bi bi-pie-chart-fill"></i>
                                     <span>Budgets</span>
                                 </Link>
+                                <Link
+                                    to="/goals"
+                                    onClick={() => setIsMenuOpen(false)}
+                                    className={`flex items-center space-x-2 px-4 py-3 rounded-lg transition-all ${isActive('/goals')
+                                        ? 'bg-primary-light dark:bg-primary-moss text-primary-kombu dark:text-white'
+                                        : 'text-text-secondary dark:text-neutral-400'
+                                        }`}
+                                >
+                                    <i className="bi bi-bullseye"></i>
+                                    <span>Goals</span>
+                                </Link>
+                                <Link
+                                    to="/reports"
+                                    onClick={() => setIsMenuOpen(false)}
+                                    className={`flex items-center space-x-2 px-4 py-3 rounded-lg transition-all ${isActive('/reports')
+                                        ? 'bg-primary-light dark:bg-primary-moss text-primary-kombu dark:text-white'
+                                        : 'text-text-secondary dark:text-neutral-400'
+                                        }`}
+                                >
+                                    <i className="bi bi-graph-up"></i>
+                                    <span>Reports</span>
+                                </Link>
+                                <Link
+                                    to="/settings"
+                                    onClick={() => setIsMenuOpen(false)}
+                                    className={`flex items-center space-x-2 px-4 py-3 rounded-lg transition-all ${isActive('/settings')
+                                        ? 'bg-primary-light dark:bg-primary-moss text-primary-kombu dark:text-white'
+                                        : 'text-text-secondary dark:text-neutral-400'
+                                        }`}
+                                >
+                                    <i className="bi bi-gear"></i>
+                                    <span>Settings</span>
+                                </Link>
                                 <button
                                     onClick={toggleTheme}
                                     className="flex items-center space-x-2 w-full px-4 py-3 text-text-secondary dark:text-neutral-400 text-left rounded-lg hover:bg-bg-secondary dark:hover:bg-neutral-700 transition-all"
@@ -178,7 +244,7 @@ function Navbar({ user }) {
                                     <span>{isDark ? 'Light Mode' : 'Dark Mode'}</span>
                                 </button>
                                 <div className="px-4 py-3 text-sm text-text-secondary dark:text-neutral-400">
-                                    {currentUser?.name}
+                                    {user.name}
                                 </div>
                                 <button
                                     onClick={() => {
