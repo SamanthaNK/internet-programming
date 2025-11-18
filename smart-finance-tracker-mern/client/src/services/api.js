@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { toast } from 'react-toastify';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
@@ -89,5 +88,18 @@ export const deleteTransaction = (id) => {
 export const getSummaryStats = (period = 'month') => {
     return api.get('/transactions/summary', { params: { period } });
 };
+
+// Budget APIs
+export const getBudgets = (month) => api.get('/budgets', { params: { month } });
+export const createBudget = (data) => api.post('/budgets', data);
+export const updateBudget = (id, data) => api.put(`/budgets/${id}`, data);
+export const deleteBudget = (id) => api.delete(`/budgets/${id}`);
+export const getBudgetRecommendations = () => api.get('/budgets/recommendations');
+
+// Template APIs
+export const getTemplates = () => api.get('/budgets/templates');
+export const createTemplate = (payload) => api.post('/budgets/templates', payload);
+export const applyTemplate = (name, month) => api.post(`/budgets/templates/${encodeURIComponent(name)}/apply`, { month });
+export const deleteTemplate = (name) => api.delete(`/budgets/templates/${encodeURIComponent(name)}`);
 
 export default api;

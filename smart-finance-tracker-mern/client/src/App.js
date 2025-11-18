@@ -11,6 +11,7 @@ import ResetPassword from './pages/ResetPassword';
 import ConfirmResetPassword from './pages/ConfirmResetPassword';
 import Dashboard from './pages/Dashboard';
 import Transactions from './pages/Transaction';
+import Budget from './pages/Budget';
 import SessionTimeout from './pages/SessionTimeout';
 
 const ProtectedRoute = ({ children }) => {
@@ -86,6 +87,14 @@ function App() {
                             element={
                                 <ProtectedRoute>
                                     <Transactions />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/budgets"
+                            element={
+                                <ProtectedRoute>
+                                    <Budget />
                                 </ProtectedRoute>
                             }
                         />

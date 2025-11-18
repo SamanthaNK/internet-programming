@@ -7,6 +7,16 @@ function Navbar({ user }) {
     const location = useLocation();
     const navigate = useNavigate();
     const { isDark, toggleTheme } = useTheme();
+    const [currentUser, setCurrentUser] = useState(user || null);
+
+    React.useEffect(() => {
+        if (!user) {
+            const u = localStorage.getItem('user');
+            if (u) setCurrentUser(JSON.parse(u));
+        } else {
+            setCurrentUser(user);
+        }
+    }, [user]);
 
     const handleLogout = () => {
         localStorage.removeItem('token');
@@ -30,7 +40,7 @@ function Navbar({ user }) {
                     </Link>
 
                     {/* Desktop Navigation */}
-                    {user ? (
+                    {currentUser ? (
                         <div className="hidden md:flex items-center space-x-2">
                             <Link
                                 to="/dashboard"
@@ -52,6 +62,16 @@ function Navbar({ user }) {
                                 <i className="bi bi-list-ul opacity-70"></i>
                                 <span>Transactions</span>
                             </Link>
+                            <Link
+                                to="/budgets"
+                                className={`flex items-center space-x-2 px-5 py-2.5 rounded-lg transition-all duration-300 text-[0.9rem] tracking-wide ${isActive('/budgets')
+                                    ? 'bg-primary-light dark:bg-primary-moss text-primary-kombu dark:text-white font-medium'
+                                    : 'text-text-secondary dark:text-neutral-400 hover:bg-bg-secondary dark:hover:bg-neutral-700 hover:text-primary-kombu dark:hover:text-neutral-200'
+                                    }`}
+                            >
+                                <i className="bi bi-pie-chart-fill opacity-70"></i>
+                                <span>Budgets</span>
+                            </Link>
 
                             {/* Dark Mode Toggle */}
                             <button
@@ -64,7 +84,7 @@ function Navbar({ user }) {
 
                             {/* User Info */}
                             <span className="text-[0.85rem] text-text-secondary dark:text-neutral-400 ml-2 font-light pl-4">
-                                Welcome back, {user.name}
+                                Welcome back, {currentUser?.name}
                             </span>
 
                             {/* Logout Button */}
@@ -139,6 +159,17 @@ function Navbar({ user }) {
                                     <i className="bi bi-list-ul"></i>
                                     <span>Transactions</span>
                                 </Link>
+                                <Link
+                                    to="/budgets"
+                                    onClick={() => setIsMenuOpen(false)}
+                                    className={`flex items-center space-x-2 px-4 py-3 rounded-lg transition-all ${isActive('/budgets')
+                                        ? 'bg-primary-light dark:bg-primary-moss text-primary-kombu dark:text-white'
+                                        : 'text-text-secondary dark:text-neutral-400'
+                                        }`}
+                                >
+                                    <i className="bi bi-pie-chart-fill"></i>
+                                    <span>Budgets</span>
+                                </Link>
                                 <button
                                     onClick={toggleTheme}
                                     className="flex items-center space-x-2 w-full px-4 py-3 text-text-secondary dark:text-neutral-400 text-left rounded-lg hover:bg-bg-secondary dark:hover:bg-neutral-700 transition-all"
@@ -147,7 +178,7 @@ function Navbar({ user }) {
                                     <span>{isDark ? 'Light Mode' : 'Dark Mode'}</span>
                                 </button>
                                 <div className="px-4 py-3 text-sm text-text-secondary dark:text-neutral-400">
-                                    {user.name}
+                                    {currentUser?.name}
                                 </div>
                                 <button
                                     onClick={() => {
