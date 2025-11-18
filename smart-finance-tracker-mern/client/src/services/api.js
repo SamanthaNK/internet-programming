@@ -108,6 +108,23 @@ export const getSummaryStats = (period = 'month') => {
     return api.get('/transactions/summary', { params: { period } });
 };
 
+// Budget functions
+export const getBudgets = (month) => {
+    return api.get('/budgets', { params: month ? { month } : {} });
+};
+
+export const createBudget = (budgetData) => {
+    return api.post('/budgets', budgetData);
+};
+
+export const updateBudget = (id, budgetData) => {
+    return api.put(`/budgets/${id}`, budgetData);
+};
+
+export const deleteBudget = (id) => {
+    return api.delete(`/budgets/${id}`);
+};
+
 // Report functions
 export const getMonthlyReport = (year) => {
     return api.get('/reports/monthly', { params: { year } });
