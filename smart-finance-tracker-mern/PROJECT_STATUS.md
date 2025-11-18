@@ -55,7 +55,7 @@
 ## In Progress
 
 ### Authentication & User Management
-- [ ] Improved Password reset functionality (nodemailer)
+- [x] Improved Password reset functionality (nodemailer)
 - [ ] User Settings management
 
 ### Budget Planner
