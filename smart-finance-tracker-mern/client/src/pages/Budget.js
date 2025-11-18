@@ -141,20 +141,41 @@ function Budget() {
                 {showForm && (
                     <div className="bg-bg-card dark:bg-neutral-800 rounded-xl shadow-md p-6 mt-3 border border-border-primary dark:border-neutral-700">
                         <form onSubmit={save}>
-                            <div className="mb-2">
-                                <label>Category</label>
-                                <select className="form-select" value={form.categoryId} onChange={e=>setForm({...form, categoryId: e.target.value})} required>
-                                    <option value="">Select</option>
-                                    {categories.map(c=> <option key={c._id} value={c._id}>{c.name}</option>)}
-                                </select>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">Category</label>
+                                    <select
+                                        className="w-full px-4 py-2 border border-border-primary dark:border-neutral-600 rounded-lg bg-bg-card dark:bg-neutral-700 text-text-primary dark:text-neutral-100 focus:ring-2 focus:ring-primary-moss focus:border-transparent"
+                                        value={form.categoryId}
+                                        onChange={e=>setForm({...form, categoryId: e.target.value})}
+                                        required
+                                    >
+                                        <option value="">Select category</option>
+                                        {categories.map(c=> <option key={c._id} value={c._id}>{c.name}</option>)}
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">Amount ({/* currency */}{user?.currency || 'XAF'})</label>
+                                    <div className="flex">
+                                        <span className="inline-flex items-center px-3 rounded-l-lg border border-r-0 border-border-primary dark:border-neutral-600 bg-bg-secondary dark:bg-neutral-700 text-text-secondary dark:text-neutral-300">{user?.currency || 'XAF'}</span>
+                                        <input
+                                            type="number"
+                                            step="0.01"
+                                            value={form.amount}
+                                            onChange={e=>setForm({...form, amount: e.target.value})}
+                                            className="flex-1 px-4 py-2 border border-border-primary dark:border-neutral-600 rounded-r-lg bg-bg-card dark:bg-neutral-700 text-text-primary dark:text-neutral-100 focus:ring-2 focus:ring-primary-moss focus:border-transparent"
+                                            placeholder="0.00"
+                                            required
+                                        />
+                                    </div>
+                                    <p className="text-xs text-text-muted dark:text-neutral-500 mt-2">Set the monthly limit for this category. You can edit it later.</p>
+                                </div>
                             </div>
-                            <div className="mb-2">
-                                <label>Amount</label>
-                                <input className="form-control" type="number" step="0.01" value={form.amount} onChange={e=>setForm({...form, amount: e.target.value})} required />
-                            </div>
-                            <div className="mb-2 d-flex justify-content-end">
-                                <button className="btn btn-secondary me-2" type="button" onClick={()=>setShowForm(false)}>Cancel</button>
-                                <button className="btn btn-primary" type="submit">Save</button>
+
+                            <div className="mt-4 flex justify-end gap-3">
+                                <button type="button" onClick={()=>setShowForm(false)} className="px-4 py-2 bg-bg-secondary dark:bg-neutral-700 text-text-primary rounded-lg hover:bg-border-primary">Cancel</button>
+                                <button type="submit" className="px-4 py-2 bg-primary-kombu dark:bg-primary-moss text-white rounded-lg hover:bg-primary-dark">Save Budget</button>
                             </div>
                         </form>
                     </div>
