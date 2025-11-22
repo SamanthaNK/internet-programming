@@ -59,11 +59,11 @@
 - [ ] User Settings management
 
 ### Budget Planner
-- [ ] Create budget per category
+- [x] Create budget per category
 - [ ] Set monthly limits
 - [ ] Visual progress bars
 - [ ] Budget vs actual comparison
-- [ ] Alert at 80% usage
+- [x] Alert at 80% usage
 - [ ] Budget performance tracking
 
 ### Financial Goals
@@ -75,12 +75,12 @@
 - [ ] Achievement notifications
 
 ### Reports & Analytics
-- [ ] Monthly spending reports
-- [ ] Income vs expense charts
-- [ ] Category breakdown (pie/donut)
-- [ ] Spending trends (line graphs)
-- [ ] Savings rate calculation
-- [ ] Custom date range reports
+- [x] Monthly spending reports
+- [x] Income vs expense charts
+- [x] Category breakdown (pie/donut)
+- [x] Spending trends (line graphs)
+- [x] Savings rate calculation
+- [x] Custom date range reports
 
 ### AI Advisor
 - [ ] AI API integration
@@ -99,9 +99,6 @@
 
 
 ## Known Issues 🐛
-
-### High Priority
-- [ ] Password reset functionality
 
 ### Medium Priority
 - [ ] Improve transaction list performance with 1000+ items

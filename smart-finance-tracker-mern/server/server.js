@@ -32,12 +32,11 @@ app.get('/', (req, res) => {
 });
 
 // Routes
-app.use('/api/auth', require('./routes/authRoutes'));
-app.use('/api/transactions', require('./routes/transactionRoutes'));
-app.use('/api/categories', require('./routes/categoryRoutes'));
-app.use('/api/reports', require('./routes/reportRoutes'));
-app.use('/api/budgets', require('./routes/budgetRoutes'));
-
+app.use('/api/auth', authRoutes);
+app.use('/api/transactions', transactionRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/reports', reportRoutes);
+app.use('/api/budgets', budgetRoutes);
 
 // Start server
 const PORT = process.env.PORT || 5000;
