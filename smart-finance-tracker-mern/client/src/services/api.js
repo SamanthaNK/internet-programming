@@ -153,7 +153,7 @@ export const getBudgetRecommendations = () => {
     return api.get('/budgets/recommendations');
 };
 
-// Template functions
+// Budget Template functions
 export const getTemplates = () => {
     return api.get('/budgets/templates');
 };
@@ -165,6 +165,23 @@ export const applyTemplate = (name, month) => {
 };
 export const deleteTemplate = (name) => {
     return api.delete(`/budgets/templates/${encodeURIComponent(name)}`);
+};
+
+// Export functions
+export const exportTransactionsCSV = async (filters = {}) => {
+    const response = await api.get('/export/csv', {
+        params: filters,
+        responseType: 'blob'
+    });
+    return response;
+};
+
+export const exportTransactionsPDF = async (filters = {}) => {
+    const response = await api.get('/export/pdf', {
+        params: filters,
+        responseType: 'blob'
+    });
+    return response;
 };
 
 export default api;

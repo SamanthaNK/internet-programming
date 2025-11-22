@@ -207,12 +207,12 @@ function Transactions() {
                 </div>
 
                 {/* Filters */}
-                <div className="bg-bg-card dark:bg-neutral-800 rounded-xl shadow-md p-6 mb-6 border border-border-primary dark:border-neutral-700">
+                <div className="bg-bg-card dark:bg-neutral-800 rounded-xl shadow-md p-6 border border-border-primary dark:border-neutral-700 mb-6">
                     <div className="flex justify-between items-center mb-4">
                         <h3 className="text-lg font-medium text-primary-kombu dark:text-primary-light">Filters</h3>
                         <button
                             onClick={() => setShowFilters(!showFilters)}
-                            className="flex items-center space-x-2 text-primary-moss dark:text-primary-light hover:text-primary-kombu dark:hover:text-primary-moss transition-colors"
+                            className="flex items-center gap-2 text-primary-moss dark:text-primary-light hover:text-primary-kombu dark:hover:text-primary-moss transition-colors text-sm"
                         >
                             <span>{showFilters ? 'Hide' : 'Show'}</span>
                             <i className={`bi bi-chevron-${showFilters ? 'up' : 'down'}`}></i>
@@ -220,10 +220,12 @@ function Transactions() {
                     </div>
 
                     {showFilters && (
-                        <div className="space-y-4">
-                            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                        <>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">Type</label>
+                                    <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">
+                                        Type
+                                    </label>
                                     <select
                                         name="type"
                                         value={filters.type}
@@ -237,7 +239,9 @@ function Transactions() {
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">Category</label>
+                                    <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">
+                                        Category
+                                    </label>
                                     <select
                                         name="category"
                                         value={filters.category}
@@ -252,7 +256,9 @@ function Transactions() {
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">From Date</label>
+                                    <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">
+                                        Start Date
+                                    </label>
                                     <input
                                         type="date"
                                         name="startDate"
@@ -263,7 +269,9 @@ function Transactions() {
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">To Date</label>
+                                    <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">
+                                        End Date
+                                    </label>
                                     <input
                                         type="date"
                                         name="endDate"
@@ -274,7 +282,9 @@ function Transactions() {
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">Sort By</label>
+                                    <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">
+                                        Sort By
+                                    </label>
                                     <select
                                         name="sort"
                                         value={filters.sort}
@@ -289,21 +299,21 @@ function Transactions() {
                                 </div>
                             </div>
 
-                            <div className="flex space-x-3">
+                            <div className="flex gap-3 mt-4">
                                 <button
                                     onClick={applyFilters}
-                                    className="px-6 py-2 bg-primary-kombu dark:bg-primary-moss text-white rounded-lg hover:bg-primary-dark dark:hover:bg-primary-kombu transition-colors"
+                                    className="px-6 py-2 bg-primary-kombu dark:bg-primary-moss text-white rounded-lg hover:bg-primary-dark dark:hover:bg-primary-kombu transition-colors text-sm font-medium"
                                 >
-                                    Apply Filters
+                                    Apply
                                 </button>
                                 <button
                                     onClick={resetFilters}
-                                    className="px-6 py-2 bg-bg-secondary dark:bg-neutral-700 text-text-primary dark:text-neutral-300 rounded-lg hover:bg-border-primary dark:hover:bg-neutral-600 transition-colors"
+                                    className="px-6 py-2 bg-bg-secondary dark:bg-neutral-700 text-text-primary dark:text-neutral-300 rounded-lg hover:bg-border-primary dark:hover:bg-neutral-600 transition-colors text-sm font-medium"
                                 >
                                     Reset
                                 </button>
                             </div>
-                        </div>
+                        </>
                     )}
                 </div>
 

@@ -14,6 +14,7 @@ import Dashboard from './pages/Dashboard';
 import Transactions from './pages/Transaction';
 import Reports from './pages/Reports';
 import Budget from './pages/Budget';
+import Export from './pages/Export';
 import SessionTimeout from './pages/SessionTimeout';
 
 const ProtectedRoute = ({ children }) => {
@@ -60,7 +61,7 @@ function App() {
             document.head.appendChild(link);
         }
 
-        link.href = '/Financetracker.ico';
+        link.href = 'assets/Financetracker.ico';
         link.type = 'image/x-icon';
     }, []);
 
@@ -131,6 +132,14 @@ function App() {
                             element={
                                 <ProtectedRoute>
                                     <Budget />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/export"
+                            element={
+                                <ProtectedRoute>
+                                    <Export />
                                 </ProtectedRoute>
                             }
                         />

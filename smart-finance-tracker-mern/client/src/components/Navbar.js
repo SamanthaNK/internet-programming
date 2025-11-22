@@ -32,23 +32,23 @@ function Navbar({ user }) {
             ? 'bg-bg-card/80 dark:bg-neutral-800/80 backdrop-blur-lg shadow-md'
             : 'bg-bg-card dark:bg-neutral-800'
             } border-b border-border-primary dark:border-neutral-700`}>
-            <div className="max-w-[1400px] mx-auto px-8">
-                <div className="flex justify-between items-center h-20">
+            <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="flex justify-between items-center h-16 sm:h-20">
                     {/* Logo */}
                     <Link
                         to={user ? "/dashboard" : "/"}
-                        className="flex items-center space-x-2 text-[1.75rem] font-serif font-medium text-primary-kombu dark:text-primary-light hover:text-primary-moss dark:hover:text-primary-moss transition-all duration-300"
+                        className="flex items-center space-x-1 sm:space-x-2 text-lg sm:text-[1.75rem] font-serif font-medium text-primary-kombu dark:text-primary-light hover:text-primary-moss dark:hover:text-primary-moss transition-all duration-300"
                     >
-                        <i className="bi bi-tree-fill text-[1.75rem] text-primary-moss"></i>
-                        <span className="tracking-wide">FinanceTracker</span>
+                        <i className="bi bi-tree-fill text-lg sm:text-[1.75rem] text-primary-moss"></i>
+                        <span className="tracking-wide hidden sm:inline">FinanceTracker</span>
                     </Link>
 
                     {/* Desktop Navigation */}
                     {user ? (
-                        <div className="hidden md:flex items-center space-x-1">
+                        <div className="hidden md:flex items-center space-x-0.5 lg:space-x-1">
                             <Link
                                 to="/dashboard"
-                                className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-300 text-[0.9rem] tracking-wide ${isActive('/dashboard')
+                                className={`flex items-center space-x-1 px-2 lg:px-4 py-2 rounded-lg transition-all duration-300 text-xs lg:text-[0.9rem] tracking-wide ${isActive('/dashboard')
                                     ? 'bg-primary-light dark:bg-primary-moss text-primary-kombu dark:text-white font-medium'
                                     : 'text-text-secondary dark:text-neutral-400 hover:bg-bg-secondary dark:hover:bg-neutral-700 hover:text-primary-kombu dark:hover:text-neutral-200'
                                     }`}
@@ -58,7 +58,7 @@ function Navbar({ user }) {
                             </Link>
                             <Link
                                 to="/transactions"
-                                className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-300 text-[0.9rem] tracking-wide ${isActive('/transactions')
+                                className={`flex items-center space-x-1 px-2 lg:px-4 py-2 rounded-lg transition-all duration-300 text-xs lg:text-[0.9rem] tracking-wide ${isActive('/transactions')
                                     ? 'bg-primary-light dark:bg-primary-moss text-primary-kombu dark:text-white font-medium'
                                     : 'text-text-secondary dark:text-neutral-400 hover:bg-bg-secondary dark:hover:bg-neutral-700 hover:text-primary-kombu dark:hover:text-neutral-200'
                                     }`}
@@ -68,7 +68,7 @@ function Navbar({ user }) {
                             </Link>
                             <Link
                                 to="/budgets"
-                                className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-300 text-[0.9rem] tracking-wide ${isActive('/budgets')
+                                className={`flex items-center space-x-1 px-2 lg:px-4 py-2 rounded-lg transition-all duration-300 text-xs lg:text-[0.9rem] tracking-wide ${isActive('/budgets')
                                     ? 'bg-primary-light dark:bg-primary-moss text-primary-kombu dark:text-white font-medium'
                                     : 'text-text-secondary dark:text-neutral-400 hover:bg-bg-secondary dark:hover:bg-neutral-700 hover:text-primary-kombu dark:hover:text-neutral-200'
                                     }`}
@@ -78,7 +78,7 @@ function Navbar({ user }) {
                             </Link>
                             <Link
                                 to="/goals"
-                                className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-300 text-[0.9rem] tracking-wide ${isActive('/goals')
+                                className={`flex items-center space-x-1 px-2 lg:px-4 py-2 rounded-lg transition-all duration-300 text-xs lg:text-[0.9rem] tracking-wide ${isActive('/goals')
                                     ? 'bg-primary-light dark:bg-primary-moss text-primary-kombu dark:text-white font-medium'
                                     : 'text-text-secondary dark:text-neutral-400 hover:bg-bg-secondary dark:hover:bg-neutral-700 hover:text-primary-kombu dark:hover:text-neutral-200'
                                     }`}
@@ -88,41 +88,51 @@ function Navbar({ user }) {
                             </Link>
                             <Link
                                 to="/reports"
-                                className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-300 text-[0.9rem] tracking-wide ${isActive('/reports')
+                                className={`flex items-center space-x-1 px-2 lg:px-4 py-2 rounded-lg transition-all duration-300 text-xs lg:text-[0.9rem] tracking-wide ${isActive('/reports')
                                     ? 'bg-primary-light dark:bg-primary-moss text-primary-kombu dark:text-white font-medium'
                                     : 'text-text-secondary dark:text-neutral-400 hover:bg-bg-secondary dark:hover:bg-neutral-700 hover:text-primary-kombu dark:hover:text-neutral-200'
                                     }`}
                             >
                                 <i className="bi bi-graph-up opacity-70"></i>
-                                <span>Reports & Analytics</span>
+                                <span>Reports</span>
+                            </Link>
+                            <Link
+                                to="/export"
+                                className={`flex items-center space-x-1 px-2 lg:px-4 py-2 rounded-lg transition-all duration-300 text-xs lg:text-[0.9rem] tracking-wide ${isActive('/export')
+                                    ? 'bg-primary-light dark:bg-primary-moss text-primary-kombu dark:text-white font-medium'
+                                    : 'text-text-secondary dark:text-neutral-400 hover:bg-bg-secondary dark:hover:bg-neutral-700 hover:text-primary-kombu dark:hover:text-neutral-200'
+                                    }`}
+                            >
+                                <i className="bi bi-box-arrow-up-right opacity-70"></i>
+                                <span>Export</span>
                             </Link>
 
                             {/* Dark Mode Toggle */}
                             <button
                                 onClick={toggleTheme}
-                                className="p-3 ml-2 rounded-lg text-text-secondary dark:text-neutral-400 hover:bg-bg-secondary dark:hover:bg-neutral-700 transition-all duration-300"
+                                className="p-2 lg:p-3 lg:ml-2 rounded-lg text-text-secondary dark:text-neutral-400 hover:bg-bg-secondary dark:hover:bg-neutral-700 transition-all duration-300"
                                 aria-label="Toggle dark mode"
                             >
-                                <i className={`bi bi-${isDark ? 'sun' : 'moon'}-fill text-xl`}></i>
+                                <i className={`bi bi-${isDark ? 'sun' : 'moon'}-fill text-lg lg:text-xl`}></i>
                             </button>
 
                             {/* User Menu */}
-                            <div className="relative ml-2">
+                            <div className="relative lg:ml-2">
                                 <button
                                     onClick={() => setShowUserMenu(!showUserMenu)}
-                                    className="flex items-center space-x-2 px-4 py-2.5 rounded-lg text-text-secondary dark:text-neutral-400 hover:bg-bg-secondary dark:hover:bg-neutral-700 transition-all duration-300"
+                                    className="flex items-center space-x-1 px-2 lg:px-4 py-2 lg:py-2.5 rounded-lg text-text-secondary dark:text-neutral-400 hover:bg-bg-secondary dark:hover:bg-neutral-700 transition-all duration-300"
                                 >
-                                    <i className="bi bi-person-circle text-xl"></i>
-                                    <span className="text-[0.85rem]">{user.name}</span>
-                                    <i className={`bi bi-chevron-${showUserMenu ? 'up' : 'down'} text-xs`}></i>
+                                    <i className="bi bi-person-circle text-lg lg:text-xl"></i>
+                                    <span className="text-xs lg:text-[0.85rem] hidden lg:inline">{user.name}</span>
+                                    <i className={`bi bi-chevron-${showUserMenu ? 'up' : 'down'} text-xs hidden lg:inline`}></i>
                                 </button>
 
                                 {showUserMenu && (
-                                    <div className="absolute right-0 mt-2 w-48 bg-bg-card dark:bg-neutral-800 rounded-lg shadow-xl border border-border-primary dark:border-neutral-700 py-2 z-50">
+                                    <div className="absolute right-0 mt-2 w-40 lg:w-48 bg-bg-card dark:bg-neutral-800 rounded-lg shadow-xl border border-border-primary dark:border-neutral-700 py-2 z-50">
                                         <Link
                                             to="/settings"
                                             onClick={() => setShowUserMenu(false)}
-                                            className="flex items-center space-x-2 px-4 py-2 text-text-secondary dark:text-neutral-400 hover:bg-bg-secondary dark:hover:bg-neutral-700 transition-all"
+                                            className="flex items-center space-x-2 px-4 py-2 text-xs lg:text-sm text-text-secondary dark:text-neutral-400 hover:bg-bg-secondary dark:hover:bg-neutral-700 transition-all"
                                         >
                                             <i className="bi bi-gear"></i>
                                             <span>Settings</span>
@@ -133,7 +143,7 @@ function Navbar({ user }) {
                                                 handleLogout();
                                                 setShowUserMenu(false);
                                             }}
-                                            className="flex items-center space-x-2 w-full px-4 py-2 text-accent-terracotta dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all"
+                                            className="flex items-center space-x-2 w-full px-4 py-2 text-xs lg:text-sm text-accent-terracotta dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all"
                                         >
                                             <i className="bi bi-box-arrow-right"></i>
                                             <span>Logout</span>
@@ -143,25 +153,25 @@ function Navbar({ user }) {
                             </div>
                         </div>
                     ) : (
-                        <div className="hidden md:flex items-center space-x-4">
+                        <div className="hidden md:flex items-center gap-2 lg:gap-4">
                             {/* Dark Mode Toggle */}
                             <button
                                 onClick={toggleTheme}
-                                className="p-3 rounded-lg text-text-secondary dark:text-neutral-400 hover:bg-bg-secondary dark:hover:bg-neutral-700 transition-all duration-300"
+                                className="p-2 lg:p-3 rounded-lg text-text-secondary dark:text-neutral-400 hover:bg-bg-secondary dark:hover:bg-neutral-700 transition-all duration-300"
                                 aria-label="Toggle dark mode"
                             >
-                                <i className={`bi bi-${isDark ? 'sun' : 'moon'}-fill text-xl`}></i>
+                                <i className={`bi bi-${isDark ? 'sun' : 'moon'}-fill text-lg lg:text-xl`}></i>
                             </button>
 
                             <Link
                                 to="/signin"
-                                className="px-6 py-2.5 text-text-secondary dark:text-neutral-400 hover:text-primary-kombu dark:hover:text-neutral-200 transition-all duration-300 text-[0.95rem] tracking-wide"
+                                className="px-3 lg:px-6 py-2 lg:py-2.5 text-text-secondary dark:text-neutral-400 hover:text-primary-kombu dark:hover:text-neutral-200 transition-all duration-300 text-xs lg:text-[0.95rem] tracking-wide"
                             >
                                 Sign In
                             </Link>
                             <Link
                                 to="/signup"
-                                className="px-6 py-3 bg-primary-kombu text-white rounded-lg hover:bg-accent-cafe hover:shadow-md transition-all duration-400 text-[0.95rem] tracking-wide transform hover:-translate-y-0.5"
+                                className="px-3 lg:px-6 py-2 lg:py-3 bg-primary-kombu text-white rounded-lg hover:bg-accent-cafe hover:shadow-md transition-all duration-400 text-xs lg:text-[0.95rem] tracking-wide transform hover:-translate-y-0.5"
                             >
                                 Sign Up
                             </Link>
@@ -174,7 +184,7 @@ function Navbar({ user }) {
                         className="md:hidden p-2 rounded-lg text-text-secondary dark:text-neutral-400 hover:bg-bg-secondary dark:hover:bg-neutral-700 transition-all"
                         aria-label="Toggle menu"
                     >
-                        <i className={`bi bi-${isMenuOpen ? 'x' : 'list'} text-2xl`}></i>
+                        <i className={`bi bi-${isMenuOpen ? 'x' : 'list'} text-xl sm:text-2xl`}></i>
                     </button>
                 </div>
 
@@ -237,6 +247,17 @@ function Navbar({ user }) {
                                 >
                                     <i className="bi bi-graph-up"></i>
                                     <span>Reports</span>
+                                </Link>
+                                <Link
+                                    to="/export"
+                                    onClick={() => setIsMenuOpen(false)}
+                                    className={`flex items-center space-x-2 px-4 py-3 rounded-lg transition-all ${isActive('/export')
+                                        ? 'bg-primary-light dark:bg-primary-moss text-primary-kombu dark:text-white'
+                                        : 'text-text-secondary dark:text-neutral-400'
+                                        }`}
+                                >
+                                    <i className="bi bi-file-earmark-arrow-up"></i>
+                                    <span>Export</span>
                                 </Link>
                                 <Link
                                     to="/settings"

@@ -38,34 +38,40 @@ const sendResetEmail = async (email, resetUrl) => {
             <html>
             <head>
                 <style>
-                    body { font-family: 'Montserrat', Arial, sans-serif; line-height: 1.6; color: #2A2D22; }
+                    body { font-family: 'Montserrat', Arial, sans-serif; line-height: 1.6; color: #2A2D22; margin: 0; padding: 0; }
                     .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-                    .header { background: linear-gradient(135deg, #354024 0%, #889063 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
-                    .content { background: #FDFDFB; padding: 30px; border: 1px solid #E5E3DA; border-top: none; border-radius: 0 0 10px 10px; }
-                    .button { display: inline-block; background: #354024; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; margin: 20px 0; font-weight: 500; }
+                    .header { background: #354024; color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
+                    .header h1 { margin: 0; font-family: 'Cormorant Garamond', serif; font-size: 28px; }
+                    .header p { margin: 10px 0 0 0; font-size: 16px; }
+                    .content { background: #FDFDFB; padding: 30px; border: 1px solid #E5E3DA; border-top: none; border-radius: 0 0 8px 8px; }
+                    .content h2 { color: #354024; font-family: 'Cormorant Garamond', serif; font-size: 24px; margin: 0 0 20px 0; }
+                    .content p { margin: 15px 0; }
+                    .button { display: inline-block; background: #354024; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; margin: 20px 0; font-weight: 500; }
                     .button:hover { background: #2A3319; }
-                    .footer { text-align: center; margin-top: 30px; color: #8B8E82; font-size: 14px; }
-                    .warning { background: #FFF3CD; border-left: 4px solid #FFC107; padding: 15px; margin: 20px 0; border-radius: 4px; }
+                    .button-container { text-align: center; }
+                    .link { color: #889063; word-break: break-all; }
+                    .warning { background: #FFF3CD; border-left: 4px solid #FFC107; padding: 15px; margin: 20px 0; border-radius: 4px; font-size: 14px; }
+                    .footer { text-align: center; margin-top: 30px; color: #8B8E82; font-size: 13px; padding: 20px 0; border-top: 1px solid #E5E3DA; }
                 </style>
             </head>
             <body>
                 <div class="container">
                     <div class="header">
-                        <h1 style="margin: 0; font-family: 'Cormorant Garamond', serif;">🌳 Finance Tracker</h1>
-                        <p style="margin: 10px 0 0 0;">Password Reset Request</p>
+                        <h1>🌳 Finance Tracker</h1>
+                        <p>Password Reset Request</p>
                     </div>
                     <div class="content">
-                        <h2 style="color: #354024; font-family: 'Cormorant Garamond', serif;">Reset Your Password</h2>
+                        <h2>Reset Your Password</h2>
                         <p>You requested to reset your password for your Finance Tracker account.</p>
                         <p>Click the button below to reset your password. This link will expire in <strong>10 minutes</strong>.</p>
 
-                        <div style="text-align: center;">
+                        <div class="button-container">
                             <a href="${resetUrl}" class="button">Reset Password</a>
                         </div>
 
-                        <p style="margin-top: 20px; font-size: 14px; color: #5F6355;">
+                        <p style="font-size: 14px; color: #5F6355;">
                             Or copy and paste this link into your browser:<br>
-                            <a href="${resetUrl}" style="color: #889063; word-break: break-all;">${resetUrl}</a>
+                            <a href="${resetUrl}" class="link">${resetUrl}</a>
                         </p>
 
                         <div class="warning">
@@ -73,7 +79,7 @@ const sendResetEmail = async (email, resetUrl) => {
                             If you didn't request this password reset, please ignore this email. Your password will remain unchanged.
                         </div>
 
-                        <p style="margin-top: 30px; color: #8B8E82; font-size: 14px;">
+                        <p style="margin-top: 30px; color: #8B8E82; font-size: 13px;">
                             This is an automated email. Please do not reply to this message.
                         </p>
                     </div>

@@ -16,29 +16,6 @@ function Landing() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    const features = [
-        {
-            icon: 'bi-cash-coin',
-            title: 'Track Transactions',
-            desc: 'Record income and expenses with smart categorization'
-        },
-        {
-            icon: 'bi-pie-chart',
-            title: 'Visual Reports',
-            desc: 'Beautiful charts and insights to understand spending'
-        },
-        {
-            icon: 'bi-piggy-bank',
-            title: 'Set Goals',
-            desc: 'Create savings goals and track progress'
-        },
-        {
-            icon: 'bi-shield-check',
-            title: 'Secure & Private',
-            desc: 'Your financial data is encrypted and protected'
-        }
-    ];
-
     const steps = [
         {
             number: '01',
@@ -223,7 +200,7 @@ function Landing() {
                                 <span className="text-accent-cafe">finances</span>
                             </h1>
 
-                            <p className="text-lg text-text-secondary mb-8 mb-8 font-light leading-relaxed">
+                            <p className="text-lg text-text-secondary mb-8 font-light leading-relaxed">
                                 Track expenses, manage budgets, and achieve your financial goals with AI-powered insights. Your journey to financial freedom starts here.
                             </p>
 
@@ -522,7 +499,7 @@ function Landing() {
             </section>
 
             {/* Footer */}
-            <secction footer className="bg-bg-secondary dark:bg-neutral-800 border-t border-border-primary dark:border-neutral-700 py-12" >
+            <section footer className="bg-bg-secondary dark:bg-neutral-800 border-t border-border-primary dark:border-neutral-700 py-12" >
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
                         <div className="col-span-1 md:col-span-2">
@@ -572,7 +549,7 @@ function Landing() {
                         </p>
                     </div>
                 </div>
-            </secction>
+            </section>
         </div >
     );
 }

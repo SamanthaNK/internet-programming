@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { showToast } from '../utils/toastConfig';
-import { exportToCSV, exportToPDF } from '../services/api';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -119,7 +118,6 @@ function Reports() {
     const [loading, setLoading] = useState(true);
     const [selectedPeriod, setSelectedPeriod] = useState('month');
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-    const [exporting, setExporting] = useState(false);
 
     // Data states
     const [monthlyData, setMonthlyData] = useState(null);
@@ -132,6 +130,34 @@ function Reports() {
     const navigate = useNavigate();
 
     useEffect(() => {
+        const loadAllReports = async () => {
+            try {
+                setLoading(true);
+
+                const [monthly, category, trends, comparison, top, dayOfWeek] = await Promise.all([
+                    getMonthlyReport(selectedYear),
+                    getCategoryBreakdown(selectedPeriod, 'expense'),
+                    getSpendingTrends(selectedPeriod, 'day'),
+                    getComparisonReport(),
+                    getTopCategories(selectedPeriod, 5),
+                    getSpendingByDayOfWeek(selectedPeriod)
+                ]);
+
+                setMonthlyData(monthly.data.data);
+                setCategoryData(category.data.data);
+                setTrendsData(trends.data.data);
+                setComparisonData(comparison.data.data);
+                setTopCategories(top.data.data);
+                setDayOfWeekData(dayOfWeek.data.data);
+
+            } catch (error) {
+                showToast.error('Error loading reports');
+                console.error('Reports error:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
         const userData = localStorage.getItem('user');
         if (!userData) {
             navigate('/signin');
@@ -141,85 +167,8 @@ function Reports() {
         loadAllReports();
     }, [navigate, selectedPeriod, selectedYear]);
 
-    const loadAllReports = async () => {
-        try {
-            setLoading(true);
-
-            const [monthly, category, trends, comparison, top, dayOfWeek] = await Promise.all([
-                getMonthlyReport(selectedYear),
-                getCategoryBreakdown(selectedPeriod, 'expense'),
-                getSpendingTrends(selectedPeriod, 'day'),
-                getComparisonReport(),
-                getTopCategories(selectedPeriod, 5),
-                getSpendingByDayOfWeek(selectedPeriod)
-            ]);
-
-            setMonthlyData(monthly.data.data);
-            setCategoryData(category.data.data);
-            setTrendsData(trends.data.data);
-            setComparisonData(comparison.data.data);
-            setTopCategories(top.data.data);
-            setDayOfWeekData(dayOfWeek.data.data);
-
-        } catch (error) {
-            showToast.error('Error loading reports');
-            console.error('Reports error:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
     const formatCurrency = (amount) => {
         return amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    };
-
-    // Export CSV
-    const handleExportCSV = () => {
-        if (!categoryData || categoryData.categories.length === 0) {
-            showToast.error('No data to export');
-            return;
-        }
-
-        setExporting(true);
-
-        try {
-            // CSV Header
-            let csv = 'Category,Amount,Transactions,Percentage\n';
-
-            // CSV Data
-            categoryData.categories.forEach(cat => {
-                csv += `${cat.category},${cat.amount},${cat.count},${cat.percentage}%\n`;
-            });
-
-            // Add summary
-            csv += '\nSummary\n';
-            csv += `Total Expenses,${categoryData.total}\n`;
-            csv += `Total Transactions,${categoryData.transactionCount}\n`;
-            csv += `Period,${selectedPeriod}\n`;
-
-            // Create download
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `financial-report-${selectedPeriod}-${Date.now()}.csv`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-
-            showToast.success('Report exported successfully');
-        } catch (error) {
-            showToast.error('Error exporting report');
-            console.error('Export error:', error);
-        } finally {
-            setExporting(false);
-        }
-    };
-
-    // Export PDF
-    const handleExportPDF = () => {
-        showToast.info('PDF export feature coming soon!');
     };
 
     // Monthly Income vs Expense Chart
@@ -551,6 +500,17 @@ function Reports() {
                         </div>
                     </div>
                 )}
+
+                {/* Export Button */}
+                <div className="flex justify-center m-8">
+                    <button
+                        onClick={() => navigate('/export')}
+                        className="flex items-center gap-2 px-8 py-3 bg-primary-kombu dark:bg-primary-moss text-white rounded-lg hover:bg-primary-dark dark:hover:bg-primary-kombu transition-all shadow-md hover:shadow-lg font-medium"
+                    >
+                        <i className="bi bi-download"></i>
+                        <span>Export Report</span>
+                    </button>
+                </div>
 
                 {/* Empty State */}
                 {(!categoryData || categoryData.categories.length === 0) && (
