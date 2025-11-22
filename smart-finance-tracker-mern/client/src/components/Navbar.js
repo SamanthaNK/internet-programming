@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 
 function Navbar({ user }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [showUserMenu, setShowUserMenu] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
     const { isDark, toggleTheme } = useTheme();
@@ -15,10 +16,22 @@ function Navbar({ user }) {
         navigate('/session-timeout?reason=logout');
     };
 
+    // Handle scroll for sticky navbar with blur
+    useEffect(() => {
+        const handleScroll = () => {
+            setScrolled(window.scrollY > 20);
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
     const isActive = (path) => location.pathname === path;
 
     return (
-        <nav className="bg-bg-card dark:bg-neutral-800 border-b border-border-primary dark:border-neutral-700 sticky top-0 z-50 shadow-sm">
+        <nav className={`sticky top-0 z-50 transition-all duration-300 ${scrolled
+            ? 'bg-bg-card/80 dark:bg-neutral-800/80 backdrop-blur-lg shadow-md'
+            : 'bg-bg-card dark:bg-neutral-800'
+            } border-b border-border-primary dark:border-neutral-700`}>
             <div className="max-w-[1400px] mx-auto px-8">
                 <div className="flex justify-between items-center h-20">
                     {/* Logo */}

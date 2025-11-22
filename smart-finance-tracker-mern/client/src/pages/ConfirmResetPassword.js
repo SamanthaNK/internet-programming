@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { showToast } from '../utils/toastConfig';
 import { resetPassword } from '../services/api';
 import { useTheme } from '../context/ThemeContext';
 
@@ -20,7 +20,7 @@ function ConfirmResetPassword() {
         // Check if token exists
         if (!token) {
             setTokenValid(false);
-            toast.error('Invalid reset link');
+            showToast.error('Invalid reset link');
         }
     }, [token]);
 
@@ -37,13 +37,13 @@ function ConfirmResetPassword() {
         // Validate password
         const passwordError = validatePassword(password);
         if (passwordError) {
-            toast.error(passwordError);
+            showToast.error(passwordError);
             return;
         }
 
         // Check if passwords match
         if (password !== confirmPassword) {
-            toast.error('Passwords do not match');
+            showToast.error('Passwords do not match');
             return;
         }
 
@@ -57,7 +57,7 @@ function ConfirmResetPassword() {
                 localStorage.setItem('token', response.data.token);
                 localStorage.setItem('user', JSON.stringify(response.data.data.user));
 
-                toast.success('Password reset successful! Redirecting to dashboard...');
+                showToast.success('Password reset successful! Redirecting to dashboard...');
 
                 // Redirect to dashboard after 2 seconds
                 setTimeout(() => {
@@ -69,9 +69,9 @@ function ConfirmResetPassword() {
 
             if (message.includes('expired') || message.includes('invalid')) {
                 setTokenValid(false);
-                toast.error('Reset link has expired or is invalid');
+                showToast.error('Reset link has expired or is invalid');
             } else {
-                toast.error(message);
+                showToast.error(message);
             }
         } finally {
             setLoading(false);

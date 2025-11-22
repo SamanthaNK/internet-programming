@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { showToast } from '../utils/toastConfig';
 import { requestPasswordReset } from '../services/api';
 import { useTheme } from '../context/ThemeContext';
 
@@ -14,7 +14,7 @@ function ResetPassword() {
         e.preventDefault();
 
         if (!email) {
-            toast.error('Please enter your email address');
+            showToast.error('Please enter your email address');
             return;
         }
 
@@ -25,11 +25,11 @@ function ResetPassword() {
 
             if (response.data.success) {
                 setEmailSent(true);
-                toast.success('Password reset instructions sent to your email');
+                showToast.success('Password reset instructions sent to your email');
             }
         } catch (error) {
             // Show generic message for security (don't reveal if email exists)
-            toast.info('If an account exists with this email, a reset link has been sent');
+            showToast.info('If an account exists with this email, a reset link has been sent');
             setEmailSent(true);
         } finally {
             setLoading(false);

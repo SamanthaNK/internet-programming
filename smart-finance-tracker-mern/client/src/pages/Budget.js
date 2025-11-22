@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { showToast } from '../utils/toastConfig';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { getCategories, getBudgets, createBudget, updateBudget, deleteBudget } from '../services/api';
@@ -21,7 +21,7 @@ function Budget() {
             setCategories(res.data.data || []);
         } catch (e) {
             console.error(e);
-            toast.error('Failed to load categories');
+            showToast.error('Failed to load categories');
         }
     }, []);
 
@@ -32,7 +32,7 @@ function Budget() {
             setBudgets(res.data.data || []);
         } catch (e) {
             console.error(e);
-            toast.error('Failed to load budgets');
+            showToast.error('Failed to load budgets');
         } finally {
             setLoading(false);
         }
@@ -60,17 +60,17 @@ function Budget() {
 
             if (form.budgetId) {
                 await updateBudget(form.budgetId, payload);
-                toast.success('Budget updated');
+                showToast.success('Budget updated');
             } else {
                 await createBudget(payload);
-                toast.success('Budget created');
+                showToast.success('Budget created');
             }
             setShowForm(false);
             setForm({ categoryId: '', amount: '', month });
             fetchBudgets();
         } catch (err) {
             console.error(err);
-            toast.error(err.response?.data?.message || 'Save failed');
+            showToast.error(err.response?.data?.message || 'Save failed');
         }
     };
 
@@ -78,11 +78,11 @@ function Budget() {
         if (!window.confirm('Delete budget?')) return;
         try {
             await deleteBudget(id);
-            toast.success('Deleted');
+            showToast.success('Deleted');
             fetchBudgets();
         } catch (e) {
             console.error(e);
-            toast.error('Delete failed');
+            showToast.error('Delete failed');
         }
     };
 
@@ -205,8 +205,8 @@ function Budget() {
                                 <div className="w-full bg-gray-200 dark:bg-neutral-600 rounded-full h-2">
                                     <div
                                         className={`h-2 rounded-full transition-all ${getOverallProgress() > 100 ? 'bg-red-500' :
-                                                getOverallProgress() >= 80 ? 'bg-yellow-400' :
-                                                    'bg-green-500'
+                                            getOverallProgress() >= 80 ? 'bg-yellow-400' :
+                                                'bg-green-500'
                                             }`}
                                         style={{ width: `${Math.min(100, getOverallProgress())}%` }}
                                     ></div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { showToast } from '../utils/toastConfig';
 import { exportToCSV, exportToPDF } from '../services/api';
 import {
     Chart as ChartJS,
@@ -162,7 +162,7 @@ function Reports() {
             setDayOfWeekData(dayOfWeek.data.data);
 
         } catch (error) {
-            toast.error('Error loading reports');
+            showToast.error('Error loading reports');
             console.error('Reports error:', error);
         } finally {
             setLoading(false);
@@ -176,7 +176,7 @@ function Reports() {
     // Export CSV
     const handleExportCSV = () => {
         if (!categoryData || categoryData.categories.length === 0) {
-            toast.error('No data to export');
+            showToast.error('No data to export');
             return;
         }
 
@@ -208,9 +208,9 @@ function Reports() {
             document.body.removeChild(a);
             window.URL.revokeObjectURL(url);
 
-            toast.success('Report exported successfully');
+            showToast.success('Report exported successfully');
         } catch (error) {
-            toast.error('Error exporting report');
+            showToast.error('Error exporting report');
             console.error('Export error:', error);
         } finally {
             setExporting(false);
@@ -219,7 +219,7 @@ function Reports() {
 
     // Export PDF
     const handleExportPDF = () => {
-        toast.info('PDF export feature coming soon!');
+        showToast.info('PDF export feature coming soon!');
     };
 
     // Monthly Income vs Expense Chart

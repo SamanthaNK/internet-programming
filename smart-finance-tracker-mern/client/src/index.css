@@ -53,70 +53,156 @@
   @apply bg-primary-moss dark:bg-neutral-500;
 }
 
-/* Toast Notifications */
+/* Toast Container */
 .Toastify__toast-container {
-  @apply z-[9999];
+  z-index: 9999;
 }
 
+/* Base Toast Styling */
 .Toastify__toast {
-  @apply rounded-xl shadow-lg font-sans;
-  padding: 1.25rem 1.75rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(53, 64, 36, 0.15);
+  padding: 16px 20px;
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
   font-weight: 300;
+  min-height: 64px;
+  backdrop-filter: blur(8px);
 }
 
+/* Success Toast - Green/Sage theme */
 .Toastify__toast--success {
-  @apply bg-primary-light text-text-primary border-2 border-accent-sage;
+  background: linear-gradient(135deg, #A8B89E 0%, #7FB069 100%);
+  border: 2px solid #7FB069;
+  color: #FFFFFF;
 }
 
 .dark .Toastify__toast--success {
-  @apply bg-green-900 text-green-100 border-green-700;
+  background: linear-gradient(135deg, #2d4a2b 0%, #3d5c3a 100%);
+  border: 2px solid #5c7a58;
+  color: #E8EFE0;
 }
 
+/* Error Toast - Terracotta/Red theme */
 .Toastify__toast--error {
-  @apply bg-red-50 text-text-primary border-2 border-accent-terracotta;
+  background: linear-gradient(135deg, #C88B7A 0%, #D17A68 100%);
+  border: 2px solid #B47562;
+  color: #FFFFFF;
 }
 
 .dark .Toastify__toast--error {
-  @apply bg-red-900 text-red-100 border-red-700;
+  background: linear-gradient(135deg, #7d3b2f 0%, #9d4b3f 100%);
+  border: 2px solid #a85545;
+  color: #FFE5E0;
 }
 
-.Toastify__toast--info {
-  @apply bg-blue-50 text-text-primary border-2 border-accent-seafoam;
-}
-
-.dark .Toastify__toast--info {
-  @apply bg-blue-900 text-blue-100 border-blue-700;
-}
-
+/* Warning Toast - Sand/Yellow theme */
 .Toastify__toast--warning {
-  @apply bg-yellow-50 text-text-primary border-2 border-accent-sand;
+  background: linear-gradient(135deg, #E3D5C1 0%, #D4C5A9 100%);
+  border: 2px solid #C9B89A;
+  color: #4C3D19;
 }
 
 .dark .Toastify__toast--warning {
-  @apply bg-yellow-900 text-yellow-100 border-yellow-700;
+  background: linear-gradient(135deg, #6b5d3f 0%, #8b7d5f 100%);
+  border: 2px solid #a89d7f;
+  color: #FFF8E7;
 }
 
+/* Info Toast - Seafoam/Blue theme */
+.Toastify__toast--info {
+  background: linear-gradient(135deg, #B8D4D0 0%, #9BC4BF 100%);
+  border: 2px solid #89B4AF;
+  color: #2A3319;
+}
+
+.dark .Toastify__toast--info {
+  background: linear-gradient(135deg, #3a5a56 0%, #4a6a66 100%);
+  border: 2px solid #5a7a76;
+  color: #E0F0ED;
+}
+
+/* Progress Bar */
 .Toastify__progress-bar {
-  @apply bg-primary-moss;
+  background: rgba(255, 255, 255, 0.3);
+  height: 4px;
 }
 
-/* Hero Background */
-.hero-light {
-  background: linear-gradient(135deg, #F8F7F3 0%, #E8EFE0 50%, #F8F7F3 100%);
+.Toastify__progress-bar--success {
+  background: rgba(255, 255, 255, 0.5);
 }
 
-.hero-dark {
-  background: linear-gradient(135deg, #1a1a1a 0%, #111 50%, #1a1a1a 100%);
+.Toastify__progress-bar--error {
+  background: rgba(255, 255, 255, 0.5);
 }
 
-.hero-deco {
-  background-image:
-    radial-gradient(circle at 20% 80%, rgba(136,144,99,0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(168,184,158,0.1) 0%, transparent 50%);
+.Toastify__progress-bar--warning {
+  background: rgba(76, 61, 25, 0.3);
 }
 
-.dark .hero-deco {
-  background-image:
-    radial-gradient(circle at 20% 80%, rgba(136,144,99,0.05) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(168,184,158,0.05) 0%, transparent 50%);
+.dark .Toastify__progress-bar--warning {
+  background: rgba(255, 248, 231, 0.3);
+}
+
+.Toastify__progress-bar--info {
+  background: rgba(42, 51, 25, 0.3);
+}
+
+.dark .Toastify__progress-bar--info {
+  background: rgba(224, 240, 237, 0.3);
+}
+
+/* Close Button */
+.Toastify__close-button {
+  color: inherit;
+  opacity: 0.8;
+}
+
+.Toastify__close-button:hover {
+  opacity: 1;
+}
+
+/* Toast Body */
+.Toastify__toast-body {
+  padding: 0;
+  margin-left: 36px;
+  line-height: 1.5;
+}
+
+/* Smooth entrance animation */
+@keyframes toastSlideIn {
+  from {
+    transform: translateX(110%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.Toastify__toast {
+  animation: toastSlideIn 0.3s ease-out;
+}
+
+/* Float animation for landing page images */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes floatSlow {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-30px);
+  }
+}
+
+.animate-floatSlow {
+  animation: floatSlow 6s ease-in-out infinite;
 }

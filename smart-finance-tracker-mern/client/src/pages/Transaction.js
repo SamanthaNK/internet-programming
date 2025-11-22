@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { showToast } from '../utils/toastConfig';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Modal from '../components/Modal';
@@ -64,7 +64,7 @@ function Transactions() {
             setTransactions(transactionsRes.data.data);
             setCategories(categoriesRes.data.data);
         } catch (error) {
-            toast.error('Error loading data');
+            showToast.error('Error loading data');
         } finally {
             setLoading(false);
         }
@@ -100,10 +100,10 @@ function Transactions() {
         try {
             if (editingTransaction) {
                 await updateTransaction(editingTransaction._id, formData);
-                toast.success('Transaction updated');
+                showToast.success('Transaction updated');
             } else {
                 await createTransaction(formData);
-                toast.success('Transaction added');
+                showToast.success('Transaction added');
             }
 
             setFormData({
@@ -117,7 +117,7 @@ function Transactions() {
             setShowModal(false);
             loadData();
         } catch (error) {
-            toast.error(error.response?.data?.message || 'Error saving transaction');
+            showToast.error(error.response?.data?.message || 'Error saving transaction');
         } finally {
             setLoading(false);
         }
@@ -141,12 +141,12 @@ function Transactions() {
 
         try {
             await createCategory({ name: newCategory.name, type: formData.type });
-            toast.success('Category created');
+            showToast.success('Category created');
             setNewCategory({ name: '' });
             setShowCategoryForm(false);
             loadData();
         } catch (error) {
-            toast.error(error.response?.data?.message || 'Error creating category');
+            showToast.error(error.response?.data?.message || 'Error creating category');
         }
     };
 
@@ -154,10 +154,10 @@ function Transactions() {
         if (window.confirm('Delete this transaction?')) {
             try {
                 await deleteTransaction(id);
-                toast.success('Transaction deleted');
+                showToast.success('Transaction deleted');
                 loadData();
             } catch (error) {
-                toast.error('Error deleting transaction');
+                showToast.error('Error deleting transaction');
             }
         }
     };

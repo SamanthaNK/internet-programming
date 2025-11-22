@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { showToast } from '../utils/toastConfig';
 import { login } from '../services/api';
 import { useTheme } from '../context/ThemeContext';
 
@@ -15,7 +15,7 @@ function SignIn() {
     // Get success message from signup redirect
     React.useEffect(() => {
         if (location.state?.message) {
-            toast.success(location.state.message);
+            showToast.success(location.state.message);
         }
     }, [location]);
 
@@ -33,12 +33,12 @@ function SignIn() {
             if (response.data.success) {
                 localStorage.setItem('token', response.data.token);
                 localStorage.setItem('user', JSON.stringify(response.data.data.user));
-                toast.success('Welcome back!');
+                showToast.success('Welcome back!');
                 navigate('/dashboard');
             }
         } catch (error) {
             const message = error.response?.data?.message || 'Login failed. Please try again.';
-            toast.error(message);
+            showToast.error(message);
         } finally {
             setLoading(false);
         }

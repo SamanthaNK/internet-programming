@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { showToast } from '../utils/toastConfig';
 import { register } from '../services/api';
 import { useTheme } from '../context/ThemeContext';
 
@@ -24,7 +24,7 @@ function SignUp() {
         e.preventDefault();
 
         if (formData.password.length < 8) {
-            toast.error('Password must be at least 8 characters');
+            showToast.error('Password must be at least 8 characters');
             return;
         }
 
@@ -39,13 +39,13 @@ function SignUp() {
             );
 
             if (response.data.success) {
-                toast.success('Account created successfully!');
+                showToast.success('Account created successfully!');
                 navigate('/signin', {
                     state: { message: 'Account created! Please sign in.' }
                 });
             }
         } catch (error) {
-            toast.error(error.response?.data?.message || 'Registration failed');
+            showToast.error(error.response?.data?.message || 'Registration failed');
         } finally {
             setLoading(false);
         }
