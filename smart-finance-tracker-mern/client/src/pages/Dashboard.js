@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { showToast } from '../utils/toastConfig';
+import { formatCurrency } from '../utils/formatCurrency';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Modal from '../components/Modal';
@@ -149,10 +150,6 @@ function Dashboard() {
         }
     };
 
-    const formatCurrency = (amount) => {
-        return amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    };
-
     const formatDate = (dateString) => {
         return new Date(dateString).toLocaleDateString('en-US', {
             month: 'short',
@@ -162,10 +159,6 @@ function Dashboard() {
     };
 
     const filteredCategories = categories.filter(cat => cat.type === formData.type);
-
-    const savingsRate = summary.totalIncome > 0
-        ? ((summary.balance / summary.totalIncome) * 100).toFixed(1)
-        : 0;
 
     // Get total budget and spent
     const totalBudget = budgets.reduce((sum, b) => sum + (b.limit || 0), 0);
@@ -238,21 +231,21 @@ function Dashboard() {
                 </div>
 
                 {/* Summary Cards with Glassmorphism */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                     {/* Total Income */}
-                    <div className="relative overflow-hidden rounded-xl">
-                        <div className="absolute inset-0 bg-gradient-to-br from-accent-sage/30 to-accent-sage/10 dark:from-green-900/30 dark:to-green-900/10"></div>
-                        <div className="relative bg-white/40 dark:bg-neutral-800/40 backdrop-blur-md border border-white/20 dark:border-neutral-700/50 rounded-xl p-6 hover:shadow-xl transition-all duration-300">
-                            <div className="flex items-center justify-between mb-3">
-                                <h3 className="text-sm text-text-secondary dark:text-neutral-400 uppercase font-medium">Total Income</h3>
-                                <div className="p-2 bg-accent-sage/20 dark:bg-green-900/30 rounded-lg">
-                                    <i className="bi bi-arrow-down-circle text-accent-sage dark:text-green-400 text-xl"></i>
+                    <div className="relative overflow-hidden rounded-2xl hover:shadow-lg transition-shadow">
+                        <div className="absolute inset-0 bg-gradient-to-br from-accent-sage/20 to-accent-sage/10 dark:from-green-900/20 dark:to-green-900/10"></div>
+                        <div className="relative bg-white/30 dark:bg-neutral-800/30 backdrop-blur-xl border border-white/20 dark:border-neutral-700/50 rounded-2xl p-8 hover:shadow-2xl transition-all duration-300">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-base sm:text-lg text-text-secondary dark:text-neutral-400 uppercase font-semibold">Total Income</h3>
+                                <div className="p-3 bg-accent-sage/25 dark:bg-green-900/40 rounded-xl">
+                                    <i className="bi bi-arrow-down-circle text-accent-sage dark:text-green-400 text-2xl"></i>
                                 </div>
                             </div>
-                            <div className="text-3xl font-serif font-medium text-accent-sage dark:text-green-400 mb-2">
-                                {user?.currency || 'XAF'} {formatCurrency(summary.totalIncome)}
+                            <div className="text-4xl sm:text-5xl font-serif font-bold text-accent-sage dark:text-green-400 mb-3">
+                                {formatCurrency(summary.totalIncome, user?.currency || 'XAF')} {user?.currency === 'XAF' ? 'frs' : ''}
                             </div>
-                            <p className="text-sm text-text-muted dark:text-neutral-400 flex items-center gap-2">
+                            <p className="text-sm sm:text-base text-text-muted dark:text-neutral-400 flex items-center gap-2">
                                 <i className="bi bi-receipt"></i>
                                 {summary.incomeCount || 0} transactions
                             </p>
@@ -260,19 +253,19 @@ function Dashboard() {
                     </div>
 
                     {/* Total Expenses */}
-                    <div className="relative overflow-hidden rounded-xl">
-                        <div className="absolute inset-0 bg-gradient-to-br from-accent-terracotta/30 to-accent-terracotta/10 dark:from-red-900/30 dark:to-red-900/10"></div>
-                        <div className="relative bg-white/40 dark:bg-neutral-800/40 backdrop-blur-md border border-white/20 dark:border-neutral-700/50 rounded-xl p-6 hover:shadow-xl transition-all duration-300">
-                            <div className="flex items-center justify-between mb-3">
-                                <h3 className="text-sm text-text-secondary dark:text-neutral-400 uppercase font-medium">Total Expenses</h3>
-                                <div className="p-2 bg-accent-terracotta/20 dark:bg-red-900/30 rounded-lg">
-                                    <i className="bi bi-arrow-up-circle text-accent-terracotta dark:text-red-400 text-xl"></i>
+                    <div className="relative overflow-hidden rounded-2xl hover:shadow-lg transition-shadow">
+                        <div className="absolute inset-0 bg-gradient-to-br from-accent-terracotta/20 to-accent-terracotta/10 dark:from-red-900/20 dark:to-red-900/10"></div>
+                        <div className="relative bg-white/30 dark:bg-neutral-800/30 backdrop-blur-xl border border-white/20 dark:border-neutral-700/50 rounded-2xl p-8 hover:shadow-2xl transition-all duration-300">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-base sm:text-lg text-text-secondary dark:text-neutral-400 uppercase font-semibold">Total Expenses</h3>
+                                <div className="p-3 bg-accent-terracotta/25 dark:bg-red-900/40 rounded-xl">
+                                    <i className="bi bi-arrow-up-circle text-accent-terracotta dark:text-red-400 text-2xl"></i>
                                 </div>
                             </div>
-                            <div className="text-3xl font-serif font-medium text-accent-terracotta dark:text-red-400 mb-2">
-                                {user?.currency || 'XAF'} {formatCurrency(summary.totalExpense)}
+                            <div className="text-4xl sm:text-5xl font-serif font-bold text-accent-terracotta dark:text-red-400 mb-3">
+                                {formatCurrency(summary.totalExpense, user?.currency || 'XAF')} {user?.currency === 'XAF' ? 'frs' : ''}
                             </div>
-                            <p className="text-sm text-text-muted dark:text-neutral-400 flex items-center gap-2">
+                            <p className="text-sm sm:text-base text-text-muted dark:text-neutral-400 flex items-center gap-2">
                                 <i className="bi bi-receipt"></i>
                                 {summary.expenseCount || 0} transactions
                             </p>
@@ -280,44 +273,22 @@ function Dashboard() {
                     </div>
 
                     {/* Balance */}
-                    <div className="relative overflow-hidden rounded-xl">
-                        <div className="absolute inset-0 bg-gradient-to-br from-accent-seafoam/30 to-accent-seafoam/10 dark:from-blue-900/30 dark:to-blue-900/10"></div>
-                        <div className="relative bg-white/40 dark:bg-neutral-800/40 backdrop-blur-md border border-white/20 dark:border-neutral-700/50 rounded-xl p-6 hover:shadow-xl transition-all duration-300">
-                            <div className="flex items-center justify-between mb-3">
-                                <h3 className="text-sm text-text-secondary dark:text-neutral-400 uppercase font-medium">Balance</h3>
-                                <div className="p-2 bg-accent-seafoam/20 dark:bg-blue-900/30 rounded-lg">
-                                    <i className="bi bi-wallet2 text-accent-seafoam dark:text-blue-400 text-xl"></i>
+                    <div className="relative overflow-hidden rounded-2xl hover:shadow-lg transition-shadow">
+                        <div className="absolute inset-0 bg-gradient-to-br from-accent-seafoam/20 to-accent-seafoam/10 dark:from-blue-900/20 dark:to-blue-900/10"></div>
+                        <div className="relative bg-white/30 dark:bg-neutral-800/30 backdrop-blur-xl border border-white/20 dark:border-neutral-700/50 rounded-2xl p-8 hover:shadow-2xl transition-all duration-300">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-base sm:text-lg text-text-secondary dark:text-neutral-400 uppercase font-semibold">Balance</h3>
+                                <div className="p-3 bg-accent-seafoam/25 dark:bg-blue-900/40 rounded-xl">
+                                    <i className="bi bi-wallet2 text-accent-seafoam dark:text-blue-400 text-2xl"></i>
                                 </div>
                             </div>
-                            <div className="text-3xl font-serif font-medium text-accent-seafoam dark:text-blue-400 mb-2">
-                                {user?.currency || 'XAF'} {formatCurrency(summary.balance)}
+                            <div className="text-4xl sm:text-5xl font-serif font-bold text-accent-seafoam dark:text-blue-400 mb-3">
+                                {formatCurrency(summary.balance, user?.currency || 'XAF')} {user?.currency === 'XAF' ? 'frs' : ''}
                             </div>
-                            <p className="text-sm text-text-muted dark:text-neutral-400 flex items-center gap-2">
+                            <p className="text-sm sm:text-base text-text-muted dark:text-neutral-400 flex items-center gap-2">
                                 <i className="bi bi-graph-up-arrow"></i>
                                 {selectedPeriod === 'month' ? 'This month' : selectedPeriod === 'year' ? 'This year' : 'All time'}
                             </p>
-                        </div>
-                    </div>
-
-                    {/* Savings Rate */}
-                    <div className="relative overflow-hidden rounded-xl">
-                        <div className="absolute inset-0 bg-gradient-to-br from-primary-moss/30 to-primary-moss/10 dark:from-primary-moss/30 dark:to-primary-moss/10"></div>
-                        <div className="relative bg-white/40 dark:bg-neutral-800/40 backdrop-blur-md border border-white/20 dark:border-neutral-700/50 rounded-xl p-6 hover:shadow-xl transition-all duration-300">
-                            <div className="flex items-center justify-between mb-3">
-                                <h3 className="text-sm text-text-secondary dark:text-neutral-400 uppercase font-medium">Savings Rate</h3>
-                                <div className="p-2 bg-primary-moss/20 dark:bg-primary-moss/30 rounded-lg">
-                                    <i className="bi bi-piggy-bank text-primary-moss dark:text-primary-light text-xl"></i>
-                                </div>
-                            </div>
-                            <div className="text-3xl font-serif font-medium text-primary-moss dark:text-primary-light mb-2">
-                                {savingsRate}%
-                            </div>
-                            <div className="w-full bg-gray-200 dark:bg-neutral-600 rounded-full h-2 mt-3">
-                                <div
-                                    className="bg-primary-moss dark:bg-primary-light h-2 rounded-full transition-all duration-500"
-                                    style={{ width: `${Math.min(100, savingsRate)}%` }}
-                                ></div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -355,7 +326,7 @@ function Dashboard() {
                                 <div className="flex justify-between items-center">
                                     <span className="text-sm text-text-secondary dark:text-neutral-400">Total Spent</span>
                                     <span className="text-lg font-semibold text-primary-kombu dark:text-primary-light">
-                                        {user?.currency || 'XAF'} {formatCurrency(totalSpent)} / {formatCurrency(totalBudget)}
+                                        {formatCurrency(totalSpent, user?.currency || 'XAF')} {user?.currency === 'XAF' ? 'frs' : ''} / {formatCurrency(totalBudget, user?.currency || 'XAF')} {user?.currency === 'XAF' ? 'frs' : ''}
                                     </span>
                                 </div>
                                 <div className="w-full bg-gray-200 dark:bg-neutral-600 rounded-full h-3">
@@ -383,28 +354,28 @@ function Dashboard() {
                         <div className="grid grid-cols-2 gap-3">
                             <button
                                 onClick={() => navigate('/transactions')}
-                                className="flex flex-col items-center justify-center p-4 bg-white/60 dark:bg-neutral-700/60 rounded-lg hover:bg-white dark:hover:bg-neutral-700 transition-all border border-border-primary dark:border-neutral-600"
+                                className="flex flex-col items-center justify-center p-4 bg-white/60 dark:bg-neutral-700/60 rounded-lg hover:bg-bg-overlay dark:hover:bg-neutral-600 transition-all border border-border-primary dark:border-neutral-600"
                             >
                                 <i className="bi bi-list-ul text-2xl text-primary-moss mb-2"></i>
                                 <span className="text-sm text-text-primary dark:text-neutral-100">Transactions</span>
                             </button>
                             <button
                                 onClick={() => navigate('/budgets')}
-                                className="flex flex-col items-center justify-center p-4 bg-white/60 dark:bg-neutral-700/60 rounded-lg hover:bg-white dark:hover:bg-neutral-700 transition-all border border-border-primary dark:border-neutral-600"
+                                className="flex flex-col items-center justify-center p-4 bg-white/60 dark:bg-neutral-700/60 rounded-lg hover:bg-bg-overlay dark:hover:bg-neutral-600 transition-all border border-border-primary dark:border-neutral-600"
                             >
                                 <i className="bi bi-pie-chart-fill text-2xl text-primary-moss mb-2"></i>
                                 <span className="text-sm text-text-primary dark:text-neutral-100">Budgets</span>
                             </button>
                             <button
                                 onClick={() => navigate('/reports')}
-                                className="flex flex-col items-center justify-center p-4 bg-white/60 dark:bg-neutral-700/60 rounded-lg hover:bg-white dark:hover:bg-neutral-700 transition-all border border-border-primary dark:border-neutral-600"
+                                className="flex flex-col items-center justify-center p-4 bg-white/60 dark:bg-neutral-700/60 rounded-lg hover:bg-bg-overlay dark:hover:bg-neutral-600 transition-all border border-border-primary dark:border-neutral-600"
                             >
                                 <i className="bi bi-graph-up text-2xl text-primary-moss mb-2"></i>
                                 <span className="text-sm text-text-primary dark:text-neutral-100">Reports</span>
                             </button>
                             <button
                                 onClick={() => navigate('/goals')}
-                                className="flex flex-col items-center justify-center p-4 bg-white/60 dark:bg-neutral-700/60 rounded-lg hover:bg-white dark:hover:bg-neutral-700 transition-all border border-border-primary dark:border-neutral-600"
+                                className="flex flex-col items-center justify-center p-4 bg-white/60 dark:bg-neutral-700/60 rounded-lg hover:bg-bg-overlay dark:hover:bg-neutral-600transition-all border border-border-primary dark:border-neutral-600"
                             >
                                 <i className="bi bi-bullseye text-2xl text-primary-moss mb-2"></i>
                                 <span className="text-sm text-text-primary dark:text-neutral-100">Goals</span>
@@ -476,7 +447,7 @@ function Dashboard() {
                                             : 'text-accent-terracotta dark:text-red-400'
                                             }`}>
                                             {transaction.type === 'income' ? '+' : '-'}
-                                            {user?.currency || 'XAF'} {formatCurrency(transaction.amount)}
+                                            {formatCurrency(transaction.amount, user?.currency || 'XAF')} {user?.currency === 'XAF' ? 'frs' : ''}
                                         </div>
                                         <div className="flex space-x-2">
                                             <button

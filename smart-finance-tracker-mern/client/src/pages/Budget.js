@@ -1,6 +1,7 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { showToast } from '../utils/toastConfig';
+import { formatCurrency } from '../utils/formatCurrency';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { getCategories, getBudgets, createBudget, updateBudget, deleteBudget } from '../services/api';
@@ -15,39 +16,46 @@ function Budget() {
     const [showForm, setShowForm] = useState(false);
     const [form, setForm] = useState({ categoryId: '', amount: '', month: month, budgetId: '' });
 
-    const loadCategories = useCallback(async () => {
-        try {
-            const res = await getCategories('expense');
-            setCategories(res.data.data || []);
-        } catch (e) {
-            console.error(e);
-            showToast.error('Failed to load categories');
-        }
-    }, []);
-
-    const fetchBudgets = useCallback(async () => {
-        try {
-            setLoading(true);
-            const res = await getBudgets(month);
-            setBudgets(res.data.data || []);
-        } catch (e) {
-            console.error(e);
-            showToast.error('Failed to load budgets');
-        } finally {
-            setLoading(false);
-        }
-    }, [month]);
-
+    // Load categories - only once on mount
     useEffect(() => {
+        const loadCategories = async () => {
+            try {
+                const res = await getCategories('expense');
+                setCategories(res.data.data || []);
+            } catch (e) {
+                console.error('Load categories error:', e);
+                showToast.error('Failed to load categories');
+            }
+        };
+
         const u = localStorage.getItem('user');
         if (!u) {
             navigate('/signin');
             return;
         }
         setUser(JSON.parse(u));
-        fetchBudgets();
         loadCategories();
-    }, [fetchBudgets, loadCategories, navigate]);
+    }, [navigate]); // Only run once on mount
+
+    // Fetch budgets whenever month changes
+    useEffect(() => {
+        const fetchBudgets = async () => {
+            try {
+                setLoading(true);
+                const res = await getBudgets(month);
+                setBudgets(res.data.data || []);
+            } catch (e) {
+                console.error('Fetch budgets error:', e);
+                showToast.error('Failed to load budgets');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (user) {
+            fetchBudgets();
+        }
+    }, [month, user]); // Fetch when month or user changes
 
     const save = async (e) => {
         e.preventDefault();
@@ -66,10 +74,13 @@ function Budget() {
                 showToast.success('Budget created');
             }
             setShowForm(false);
-            setForm({ categoryId: '', amount: '', month });
-            fetchBudgets();
+            setForm({ categoryId: '', amount: '', month, budgetId: '' });
+
+            // Reload budgets after save
+            const res = await getBudgets(month);
+            setBudgets(res.data.data || []);
         } catch (err) {
-            console.error(err);
+            console.error('Save budget error:', err);
             showToast.error(err.response?.data?.message || 'Save failed');
         }
     };
@@ -79,18 +90,14 @@ function Budget() {
         try {
             await deleteBudget(id);
             showToast.success('Deleted');
-            fetchBudgets();
+
+            // Reload budgets after delete
+            const res = await getBudgets(month);
+            setBudgets(res.data.data || []);
         } catch (e) {
-            console.error(e);
+            console.error('Delete budget error:', e);
             showToast.error('Delete failed');
         }
-    };
-
-    const formatCurrency = (amount) => {
-        return amount.toLocaleString('en-US', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        });
     };
 
     const getTotalBudget = () => {
@@ -181,7 +188,7 @@ function Budget() {
                                 Total Budget
                             </h3>
                             <div className="text-3xl font-serif font-medium text-primary-kombu dark:text-primary-light">
-                                {user?.currency || 'XAF'} {formatCurrency(getTotalBudget())}
+                                {formatCurrency(getTotalBudget(), user?.currency || 'XAF')} {user?.currency === 'XAF' ? 'frs' : ''}
                             </div>
                         </div>
 
@@ -190,7 +197,7 @@ function Budget() {
                                 Total Spent
                             </h3>
                             <div className="text-3xl font-serif font-medium text-accent-terracotta dark:text-red-400">
-                                {user?.currency || 'XAF'} {formatCurrency(getTotalSpent())}
+                                {formatCurrency(getTotalSpent(), user?.currency || 'XAF')} {user?.currency === 'XAF' ? 'frs' : ''}
                             </div>
                         </div>
 
@@ -199,7 +206,7 @@ function Budget() {
                                 Remaining
                             </h3>
                             <div className="text-3xl font-serif font-medium text-primary-moss dark:text-green-400">
-                                {user?.currency || 'XAF'} {formatCurrency(Math.max(0, getTotalBudget() - getTotalSpent()))}
+                                {formatCurrency(Math.max(0, getTotalBudget() - getTotalSpent()), user?.currency || 'XAF')} {user?.currency === 'XAF' ? 'frs' : ''}
                             </div>
                             <div className="mt-3">
                                 <div className="w-full bg-gray-200 dark:bg-neutral-600 rounded-full h-2">
@@ -236,7 +243,9 @@ function Budget() {
                                         </div>
                                         <div>
                                             <div className="font-medium text-text-primary dark:text-neutral-100">{b.category || b.categoryName || 'Category'}</div>
-                                            <div className="text-sm text-text-secondary dark:text-neutral-400">Spent: {b.spent ?? 0} / {b.limit ?? 0} ({b.percent ?? 0}%)</div>
+                                            <div className="text-sm text-text-secondary dark:text-neutral-400">
+                                                Spent: {formatCurrency(b.spent ?? 0, user?.currency || 'XAF')} / {formatCurrency(b.limit ?? 0, user?.currency || 'XAF')} {user?.currency === 'XAF' ? 'frs' : ''} ({b.percent ?? 0}%)
+                                            </div>
                                         </div>
                                     </div>
                                     <div className="flex items-center space-x-3">
@@ -272,7 +281,7 @@ function Budget() {
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">Amount ({/* currency */}{user?.currency || 'XAF'})</label>
+                                    <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">Amount ({user?.currency || 'XAF'})</label>
                                     <div className="flex">
                                         <span className="inline-flex items-center px-3 rounded-l-lg border border-r-0 border-border-primary dark:border-neutral-600 bg-bg-secondary dark:bg-neutral-700 text-text-secondary dark:text-neutral-300">{user?.currency || 'XAF'}</span>
                                         <input

@@ -34,6 +34,26 @@
   p {
     font-weight: 300;
   }
+
+  /* Remove default button outline, add accessible focus */
+  button:focus {
+    outline: none;
+  }
+
+  button:focus-visible {
+    outline: 2px solid #889063;
+    outline-offset: 2px;
+  }
+
+  /* Remove default link outline, add accessible focus */
+  a:focus {
+    outline: none;
+  }
+
+  a:focus-visible {
+    outline: 2px solid #889063;
+    outline-offset: 2px;
+  }
 }
 
 /* Scrollbar styling */
@@ -184,7 +204,7 @@
   animation: toastSlideIn 0.3s ease-out;
 }
 
-/* Float animation for landing page images */
+/* Float animation for landing page */
 @keyframes float {
   0%, 100% {
     transform: translateY(0px);

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { showToast } from '../utils/toastConfig';
+import { formatCurrency } from '../utils/formatCurrency';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -166,10 +167,6 @@ function Reports() {
         setUser(JSON.parse(userData));
         loadAllReports();
     }, [navigate, selectedPeriod, selectedYear]);
-
-    const formatCurrency = (amount) => {
-        return amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    };
 
     // Monthly Income vs Expense Chart
     const monthlyChartData = monthlyData ? {
@@ -488,10 +485,10 @@ function Reports() {
                                                 {cat.count}
                                             </td>
                                             <td className="py-3 px-4 text-right text-text-secondary dark:text-neutral-400">
-                                                {user?.currency || 'XAF'} {formatCurrency(cat.average)}
+                                                {formatCurrency(cat.average, user?.currency || 'XAF')} {user?.currency === 'XAF' ? 'frs' : ''}
                                             </td>
                                             <td className="py-3 px-4 text-right font-medium text-text-primary dark:text-neutral-100">
-                                                {user?.currency || 'XAF'} {formatCurrency(cat.total)}
+                                                {formatCurrency(cat.total, user?.currency || 'XAF')} {user?.currency === 'XAF' ? 'frs' : ''}
                                             </td>
                                         </tr>
                                     ))}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { showToast } from '../utils/toastConfig';
+import { formatCurrency } from '../utils/formatCurrency';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Modal from '../components/Modal';
@@ -160,10 +161,6 @@ function Transactions() {
                 showToast.error('Error deleting transaction');
             }
         }
-    };
-
-    const formatCurrency = (amount) => {
-        return amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     };
 
     const formatDate = (dateString) => {
@@ -354,7 +351,7 @@ function Transactions() {
                                     <div className="flex items-center space-x-4 w-full sm:w-auto">
                                         <div className={`text-lg font-semibold flex-1 sm:flex-none ${transaction.type === 'income' ? 'text-accent-sage dark:text-green-400' : 'text-accent-terracotta dark:text-red-400'}`}>
                                             {transaction.type === 'income' ? '+' : '-'}
-                                            {user?.currency || 'XAF'} {formatCurrency(transaction.amount)}
+                                            {formatCurrency(transaction.amount, user?.currency || 'XAF')} {user?.currency === 'XAF' ? 'frs' : ''}
                                         </div>
                                         <div className="flex space-x-2">
                                             <button

@@ -143,6 +143,14 @@ function App() {
                                 </ProtectedRoute>
                             }
                         />
+                        <Route
+                            path="/goals"
+                            element={
+                                <ProtectedRoute>
+                                    <Dashboard />
+                                </ProtectedRoute>
+                            }
+                        />
 
                         {/* 404 - Catch all */}
                         <Route path="*" element={<Navigate to="/" replace />} />
