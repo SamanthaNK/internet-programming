@@ -10,7 +10,8 @@ const transactionRoutes = require('./routes/transactionRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
 const reportRoutes = require('./routes/reportRoutes');
 const budgetRoutes = require('./routes/budgetRoutes');
-const aiRoutes = require('./routes/aiRoutes')
+const goalRoutes = require('./routes/goalRoutes');
+const aiRoutes = require('./routes/aiRoutes');
 
 // Creating Express app
 const app = express();
@@ -38,6 +39,7 @@ app.use('/api/transactions', transactionRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/budgets', budgetRoutes);
+app.use('/api/goals', goalRoutes);
 app.use('/api/ai', aiRoutes);
 
 // Start server

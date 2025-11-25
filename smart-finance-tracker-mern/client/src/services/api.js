@@ -154,23 +154,28 @@ export const getBudgetRecommendations = () => {
 };
 
 // Goals functions
-export const getGoals = () => {
-    return api.get('/goals');
-}
+export const getGoals = (status) => {
+    return api.get('/goals', { params: status ? { status } : {} });
+};
+
 export const createGoal = (goalData) => {
     return api.post('/goals', goalData);
 };
+
 export const updateGoal = (id, goalData) => {
     return api.put(`/goals/${id}`, goalData);
 };
+
 export const deleteGoal = (id) => {
     return api.delete(`/goals/${id}`);
 };
-export const getGoalHistory = (id) => {
-    return api.get(`/goals/${id}/history`);
+
+export const getGoalHistory = (goalId) => {
+    return api.get('/goals/history', { params: goalId ? { goalId } : {} });
 };
-export const recordGoalEvent = (id, eventData) => {
-    return api.post(`/goals/${id}/events`, eventData);
+
+export const recordGoalEvent = (goalId, eventData) => {
+    return api.post('/goals/history', { goalId, ...eventData });
 };
 
 // Export functions
