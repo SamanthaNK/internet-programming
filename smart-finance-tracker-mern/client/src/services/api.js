@@ -153,18 +153,24 @@ export const getBudgetRecommendations = () => {
     return api.get('/budgets/recommendations');
 };
 
-// Budget Template functions
-export const getTemplates = () => {
-    return api.get('/budgets/templates');
+// Goals functions
+export const getGoals = () => {
+    return api.get('/goals');
+}
+export const createGoal = (goalData) => {
+    return api.post('/goals', goalData);
 };
-export const createTemplate = (payload) => {
-    return api.post('/budgets/templates', payload);
+export const updateGoal = (id, goalData) => {
+    return api.put(`/goals/${id}`, goalData);
 };
-export const applyTemplate = (name, month) => {
-    return api.post(`/budgets/templates/${encodeURIComponent(name)}/apply`, { month });
+export const deleteGoal = (id) => {
+    return api.delete(`/goals/${id}`);
 };
-export const deleteTemplate = (name) => {
-    return api.delete(`/budgets/templates/${encodeURIComponent(name)}`);
+export const getGoalHistory = (id) => {
+    return api.get(`/goals/${id}/history`);
+};
+export const recordGoalEvent = (id, eventData) => {
+    return api.post(`/goals/${id}/events`, eventData);
 };
 
 // Export functions
@@ -182,6 +188,23 @@ export const exportTransactionsPDF = async (filters = {}) => {
         responseType: 'blob'
     });
     return response;
+};
+
+// AI functions
+export const getDashboardTip = () => {
+    return api.get('/ai/dashboard-tip');
+};
+
+export const getBudgetSuggestions = () => {
+    return api.get('/ai/budget-suggestions');
+};
+
+export const getSpendingInsights = (period = 'month') => {
+    return api.get('/ai/spending-insights', { params: { period } });
+};
+
+export const getSpendingAlerts = () => {
+    return api.get('/ai/spending-alerts');
 };
 
 export default api;

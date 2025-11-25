@@ -1,3 +1,11 @@
+# Node modules
+node_modules/
+
+# npm/yarn/pnpm lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
 # IDE files
 .vscode/
 .idea/

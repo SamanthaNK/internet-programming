@@ -23,7 +23,8 @@ import {
     getSpendingTrends,
     getComparisonReport,
     getTopCategories,
-    getSpendingByDayOfWeek
+    getSpendingByDayOfWeek,
+    getSpendingInsights
 } from '../services/api';
 
 ChartJS.register(
@@ -120,45 +121,18 @@ function Reports() {
     const [selectedPeriod, setSelectedPeriod] = useState('month');
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
-    // Data states
     const [monthlyData, setMonthlyData] = useState(null);
     const [categoryData, setCategoryData] = useState(null);
     const [trendsData, setTrendsData] = useState(null);
     const [comparisonData, setComparisonData] = useState(null);
     const [topCategories, setTopCategories] = useState(null);
     const [dayOfWeekData, setDayOfWeekData] = useState(null);
+    const [aiInsights, setAiInsights] = useState([]);
+    const [loadingAI, setLoadingAI] = useState(false);
 
     const navigate = useNavigate();
 
     useEffect(() => {
-        const loadAllReports = async () => {
-            try {
-                setLoading(true);
-
-                const [monthly, category, trends, comparison, top, dayOfWeek] = await Promise.all([
-                    getMonthlyReport(selectedYear),
-                    getCategoryBreakdown(selectedPeriod, 'expense'),
-                    getSpendingTrends(selectedPeriod, 'day'),
-                    getComparisonReport(),
-                    getTopCategories(selectedPeriod, 5),
-                    getSpendingByDayOfWeek(selectedPeriod)
-                ]);
-
-                setMonthlyData(monthly.data.data);
-                setCategoryData(category.data.data);
-                setTrendsData(trends.data.data);
-                setComparisonData(comparison.data.data);
-                setTopCategories(top.data.data);
-                setDayOfWeekData(dayOfWeek.data.data);
-
-            } catch (error) {
-                showToast.error('Error loading reports');
-                console.error('Reports error:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
         const userData = localStorage.getItem('user');
         if (!userData) {
             navigate('/signin');
@@ -167,6 +141,42 @@ function Reports() {
         setUser(JSON.parse(userData));
         loadAllReports();
     }, [navigate, selectedPeriod, selectedYear]);
+
+    const loadAllReports = async () => {
+        try {
+            setLoading(true);
+            setLoadingAI(true);
+
+            const [monthly, category, trends, comparison, top, dayOfWeek, insights] = await Promise.all([
+                getMonthlyReport(selectedYear),
+                getCategoryBreakdown(selectedPeriod, 'expense'),
+                getSpendingTrends(selectedPeriod, 'day'),
+                getComparisonReport(),
+                getTopCategories(selectedPeriod, 5),
+                getSpendingByDayOfWeek(selectedPeriod),
+                getSpendingInsights(selectedPeriod)
+            ]);
+
+            setMonthlyData(monthly.data.data);
+            setCategoryData(category.data.data);
+            setTrendsData(trends.data.data);
+            setComparisonData(comparison.data.data);
+            setTopCategories(top.data.data);
+            setDayOfWeekData(dayOfWeek.data.data);
+
+            // AI insights
+            if (insights.data.success) {
+                setAiInsights(insights.data.data.insights);
+            }
+
+        } catch (error) {
+            showToast.error('Error loading reports');
+            console.error('Reports error:', error);
+        } finally {
+            setLoading(false);
+            setLoadingAI(false);
+        }
+    };
 
     // Monthly Income vs Expense Chart
     const monthlyChartData = monthlyData ? {
@@ -353,6 +363,47 @@ function Reports() {
                                 {comparisonData.changes.savingsRate}% vs last month
                             </p>
                         </div>
+                    </div>
+                )}
+
+                {/* AI Spending Insights */}
+                {aiInsights.length > 0 && (
+                    <div className="bg-gradient-to-r from-primary-light/50 to-accent-sage/30 dark:from-neutral-800/50 dark:to-neutral-700/50 backdrop-blur-sm rounded-xl shadow-md p-6 mb-8 border border-primary-moss/20 dark:border-primary-moss/30">
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="w-12 h-12 bg-gradient-to-br from-primary-moss to-accent-sage rounded-xl flex items-center justify-center shadow-md">
+                                <i className="bi bi-stars text-2xl text-white"></i>
+                            </div>
+                            <div>
+                                <h3 className="text-xl font-medium text-primary-kombu dark:text-primary-light">
+                                    AI Spending Analysis
+                                </h3>
+                                <p className="text-sm text-text-muted dark:text-neutral-500">
+                                    Key insights from your {selectedPeriod} data
+                                </p>
+                            </div>
+                        </div>
+
+                        {loadingAI ? (
+                            <div className="flex items-center gap-2 text-text-secondary dark:text-neutral-400">
+                                <div className="w-4 h-4 border-2 border-primary-moss border-t-transparent rounded-full animate-spin"></div>
+                                <span>Analyzing your spending patterns...</span>
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {aiInsights.map((insight, index) => (
+                                    <div key={index} className="flex items-start gap-3 p-4 bg-white/60 dark:bg-neutral-700/60 rounded-lg hover:bg-white dark:hover:bg-neutral-700 transition-colors">
+                                        <div className="w-8 h-8 bg-primary-moss/30 dark:bg-primary-moss/50 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                            <span className="text-sm font-medium text-primary-kombu dark:text-primary-light">
+                                                {index + 1}
+                                            </span>
+                                        </div>
+                                        <p className="text-sm text-text-secondary dark:text-neutral-400 leading-relaxed">
+                                            {insight}
+                                        </p>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 )}
 

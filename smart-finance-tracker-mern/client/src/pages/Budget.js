@@ -4,7 +4,7 @@ import { showToast } from '../utils/toastConfig';
 import { formatCurrency } from '../utils/formatCurrency';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { getCategories, getBudgets, createBudget, updateBudget, deleteBudget } from '../services/api';
+import { getCategories, getBudgets, createBudget, updateBudget, deleteBudget, getBudgetSuggestions } from '../services/api';
 
 function Budget() {
     const navigate = useNavigate();
@@ -15,19 +15,11 @@ function Budget() {
     const [categories, setCategories] = useState([]);
     const [showForm, setShowForm] = useState(false);
     const [form, setForm] = useState({ categoryId: '', amount: '', month: month, budgetId: '' });
+    const [aiSuggestions, setAiSuggestions] = useState([]);
+    const [loadingAI, setLoadingAI] = useState(false);
+    const [showSuggestions, setShowSuggestions] = useState(true);
 
-    // Load categories - only once on mount
     useEffect(() => {
-        const loadCategories = async () => {
-            try {
-                const res = await getCategories('expense');
-                setCategories(res.data.data || []);
-            } catch (e) {
-                console.error('Load categories error:', e);
-                showToast.error('Failed to load categories');
-            }
-        };
-
         const u = localStorage.getItem('user');
         if (!u) {
             navigate('/signin');
@@ -35,27 +27,52 @@ function Budget() {
         }
         setUser(JSON.parse(u));
         loadCategories();
-    }, [navigate]); // Only run once on mount
+    }, [navigate]);
 
-    // Fetch budgets whenever month changes
     useEffect(() => {
-        const fetchBudgets = async () => {
-            try {
-                setLoading(true);
-                const res = await getBudgets(month);
-                setBudgets(res.data.data || []);
-            } catch (e) {
-                console.error('Fetch budgets error:', e);
-                showToast.error('Failed to load budgets');
-            } finally {
-                setLoading(false);
-            }
-        };
-
         if (user) {
             fetchBudgets();
+            loadAISuggestions();
         }
-    }, [month, user]); // Fetch when month or user changes
+    }, [month, user]);
+
+    const loadCategories = async () => {
+        try {
+            const res = await getCategories('expense');
+            setCategories(res.data.data || []);
+        } catch (e) {
+            console.error('Load categories error:', e);
+            showToast.error('Failed to load categories');
+        }
+    };
+
+    const fetchBudgets = async () => {
+        try {
+            setLoading(true);
+            const res = await getBudgets(month);
+            setBudgets(res.data.data || []);
+        } catch (e) {
+            console.error('Fetch budgets error:', e);
+            showToast.error('Failed to load budgets');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const loadAISuggestions = async () => {
+        try {
+            setLoadingAI(true);
+            const response = await getBudgetSuggestions();
+
+            if (response.data.success) {
+                setAiSuggestions(response.data.data.suggestions);
+            }
+        } catch (error) {
+            console.error('AI Suggestions Error:', error);
+        } finally {
+            setLoadingAI(false);
+        }
+    };
 
     const save = async (e) => {
         e.preventDefault();
@@ -179,6 +196,59 @@ function Budget() {
                         </div>
                     </div>
                 </div>
+
+                {/* AI Budget Suggestions */}
+                {aiSuggestions.length > 0 && showSuggestions && (
+                    <div className="bg-gradient-to-r from-primary-light/50 to-accent-seafoam/30 dark:from-neutral-800/50 dark:to-neutral-700/50 backdrop-blur-sm rounded-xl shadow-md p-6 mb-6 border border-primary-moss/20 dark:border-primary-moss/30">
+                        <div className="flex items-start justify-between mb-4">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 bg-gradient-to-br from-primary-moss to-accent-sage rounded-lg flex items-center justify-center">
+                                    <i className="bi bi-robot text-xl text-white"></i>
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-medium text-primary-kombu dark:text-primary-light">
+                                        AI Budget Recommendations
+                                    </h3>
+                                    <p className="text-xs text-text-muted dark:text-neutral-500">
+                                        Based on your spending patterns
+                                    </p>
+                                </div>
+                            </div>
+                            <button
+                                onClick={() => setShowSuggestions(false)}
+                                className="text-text-muted dark:text-neutral-500 hover:text-text-secondary dark:hover:text-neutral-400 transition-colors"
+                            >
+                                <i className="bi bi-x-lg"></i>
+                            </button>
+                        </div>
+
+                        {loadingAI ? (
+                            <div className="flex items-center gap-2 text-text-secondary dark:text-neutral-400">
+                                <div className="w-4 h-4 border-2 border-primary-moss border-t-transparent rounded-full animate-spin"></div>
+                                <span>Analyzing your budgets...</span>
+                            </div>
+                        ) : (
+                            <div className="space-y-2">
+                                {aiSuggestions.map((suggestion, index) => (
+                                    <div key={index} className="flex items-start gap-3 p-3 bg-white/60 dark:bg-neutral-700/60 rounded-lg">
+                                        <i className="bi bi-check-circle-fill text-accent-sage dark:text-green-400 text-lg flex-shrink-0 mt-0.5"></i>
+                                        <p className="text-sm text-text-secondary dark:text-neutral-400 leading-relaxed">
+                                            {suggestion}
+                                        </p>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        <button
+                            onClick={loadAISuggestions}
+                            className="mt-4 text-sm text-primary-moss dark:text-primary-light hover:underline flex items-center gap-1"
+                        >
+                            <i className="bi bi-arrow-clockwise"></i>
+                            <span>Refresh suggestions</span>
+                        </button>
+                    </div>
+                )}
 
                 {/* Overall Summary */}
                 {budgets.length > 0 && (

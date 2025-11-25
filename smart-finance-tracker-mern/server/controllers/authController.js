@@ -20,7 +20,7 @@ const createEmailTransporter = () => {
             pass: process.env.EMAIL_PASSWORD
         },
         tls: {
-            rejectUnauthorized: false  // for development
+            rejectUnauthorized: false
         }
     });
 };

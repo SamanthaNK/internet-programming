@@ -13,7 +13,9 @@ import {
     deleteTransaction,
     getCategories,
     createCategory,
-    getBudgets
+    getBudgets,
+    getDashboardTip,
+    getSpendingAlerts
 } from '../services/api';
 
 function Dashboard() {
@@ -33,6 +35,10 @@ function Dashboard() {
     const [showCategoryForm, setShowCategoryForm] = useState(false);
     const [loading, setLoading] = useState(false);
     const [editingTransaction, setEditingTransaction] = useState(null);
+    const [aiTip, setAiTip] = useState('');
+    const [aiStats, setAiStats] = useState(null);
+    const [loadingTip, setLoadingTip] = useState(false);
+    const [spendingAlerts, setSpendingAlerts] = useState([]);
 
     const [formData, setFormData] = useState({
         type: 'expense',
@@ -53,6 +59,7 @@ function Dashboard() {
         }
         setUser(JSON.parse(userData));
         loadData();
+        loadAIFeatures();
     }, [navigate, selectedPeriod]);
 
     const loadData = async () => {
@@ -74,6 +81,29 @@ function Dashboard() {
             showToast.error('Error loading data');
         } finally {
             setLoading(false);
+        }
+    };
+
+    const loadAIFeatures = async () => {
+        try {
+            setLoadingTip(true);
+            const [tipRes, alertsRes] = await Promise.all([
+                getDashboardTip(),
+                getSpendingAlerts()
+            ]);
+
+            if (tipRes.data.success) {
+                setAiTip(tipRes.data.data.tip);
+                setAiStats(tipRes.data.data.stats);
+            }
+
+            if (alertsRes.data.success) {
+                setSpendingAlerts(alertsRes.data.data.alerts);
+            }
+        } catch (error) {
+            console.error('AI Features Error:', error);
+        } finally {
+            setLoadingTip(false);
         }
     };
 
@@ -229,6 +259,90 @@ function Dashboard() {
                         ))}
                     </div>
                 </div>
+
+                {/* AI Financial Tip */}
+                {aiTip && (
+                    <div className="bg-gradient-to-r from-primary-light/50 to-accent-sage/30 dark:from-neutral-800/50 dark:to-neutral-700/50 backdrop-blur-sm rounded-xl shadow-md p-6 mb-6 border border-primary-moss/20 dark:border-primary-moss/30">
+                        <div className="flex items-start gap-4">
+                            <div className="w-12 h-12 bg-gradient-to-br from-primary-moss to-accent-sage rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
+                                <i className="bi bi-lightbulb-fill text-2xl text-white"></i>
+                            </div>
+                            <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <h3 className="text-lg font-medium text-primary-kombu dark:text-primary-light">
+                                        AI Financial Tip
+                                    </h3>
+                                    <span className="text-xs bg-primary-moss/20 dark:bg-primary-moss/30 text-primary-moss dark:text-primary-light px-2 py-0.5 rounded-full font-medium">
+                                        Powered by AI
+                                    </span>
+                                </div>
+                                {loadingTip ? (
+                                    <div className="flex items-center gap-2 text-text-secondary dark:text-neutral-400">
+                                        <div className="w-4 h-4 border-2 border-primary-moss border-t-transparent rounded-full animate-spin"></div>
+                                        <span>Analyzing your finances...</span>
+                                    </div>
+                                ) : (
+                                    <p className="text-text-secondary dark:text-neutral-400 leading-relaxed mb-3">
+                                        {aiTip}
+                                    </p>
+                                )}
+                                {aiStats && (
+                                    <div className="flex flex-wrap gap-4 text-sm">
+                                        <span className="text-text-muted dark:text-neutral-500">
+                                            <i className="bi bi-calendar-week mr-1"></i>
+                                            Weekly: {formatCurrency(aiStats.weeklySpending, user?.currency || 'XAF')} {user?.currency === 'XAF' ? 'frs' : ''}
+                                        </span>
+                                        <span className="text-text-muted dark:text-neutral-500">
+                                            <i className="bi bi-graph-up mr-1"></i>
+                                            Daily Avg: {formatCurrency(aiStats.dailyAverage, user?.currency || 'XAF')} {user?.currency === 'XAF' ? 'frs' : ''}
+                                        </span>
+                                        {aiStats.topCategory && (
+                                            <span className="text-text-muted dark:text-neutral-500">
+                                                <i className="bi bi-tag mr-1"></i>
+                                                Top: {aiStats.topCategory}
+                                            </span>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Spending Alerts */}
+                {spendingAlerts.length > 0 && (
+                    <div className="bg-bg-card dark:bg-neutral-800 rounded-xl shadow-md p-6 mb-6 border border-border-primary dark:border-neutral-700">
+                        <div className="flex items-center gap-3 mb-4">
+                            <i className="bi bi-exclamation-triangle-fill text-2xl text-accent-terracotta dark:text-red-400"></i>
+                            <h3 className="text-lg font-medium text-primary-kombu dark:text-primary-light">
+                                Spending Alerts
+                            </h3>
+                        </div>
+                        <div className="space-y-2">
+                            {spendingAlerts.map((alert, index) => (
+                                <div
+                                    key={index}
+                                    className={`flex items-start gap-3 p-3 rounded-lg ${alert.type === 'budget_exceeded'
+                                            ? 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800'
+                                            : alert.type === 'budget_warning'
+                                                ? 'bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800'
+                                                : 'bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800'
+                                        }`}
+                                >
+                                    <i className={`bi ${alert.type === 'budget_exceeded'
+                                            ? 'bi-x-circle-fill text-red-600 dark:text-red-400'
+                                            : alert.type === 'budget_warning'
+                                                ? 'bi-exclamation-circle-fill text-yellow-600 dark:text-yellow-400'
+                                                : 'bi-info-circle-fill text-orange-600 dark:text-orange-400'
+                                        } text-lg flex-shrink-0 mt-0.5`}></i>
+                                    <p className="text-sm text-text-secondary dark:text-neutral-400 leading-relaxed">
+                                        {alert.message}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
 
                 {/* Summary Cards with Glassmorphism */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
