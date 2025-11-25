@@ -1,29 +1,18 @@
 const { GoogleGenAI } = require("@google/genai");
 
-const ai = new GoogleGenAI({
-    apiKey: process.env.GEMINI_API_KEY,
-});
+const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
+// Function to call Gemini API
 const callGeminiAPI = async (prompt) => {
     try {
-        const response = await ai.models.generateContent({
+        const response = await genAI.models.generateContent({
             model: "gemini-2.5-flash",
-            contents: prompt,
+            contents: prompt
         });
 
-        console.log("RAW GEMINI RESPONSE:", response);
+        const text = response.text;
 
-        if (response.candidates && response.candidates.length > 0) {
-            const firstCandidate = response.candidates[0];
-            if (firstCandidate.content && firstCandidate.content.length > 0) {
-                // find the first content piece of type 'output_text'
-                const outputTextItem = firstCandidate.content.find(c => c.type === 'output_text');
-                return outputTextItem ? outputTextItem.text : null;
-            }
-        }
-
-        return null;
-
+        return text;
     } catch (error) {
         console.error("Gemini API Error:", error);
         throw new Error("Gemini API request failed");
@@ -33,6 +22,7 @@ const callGeminiAPI = async (prompt) => {
 const Transaction = require('../models/transactionModel');
 const Budget = require('../models/budgetModel');
 const Category = require('../models/categoryModel');
+const Goal = require('../models/goalModel');
 
 // Get financial tip for dashboard
 exports.getDashboardTip = async (req, res) => {
@@ -70,13 +60,21 @@ exports.getDashboardTip = async (req, res) => {
         const topCategory = Object.entries(categorySpending)
             .sort((a, b) => b[1] - a[1])[0];
 
-        const prompt = `You are a friendly financial advisor. Based on this user's last 7 days:
-- Total spent: $${totalSpent.toFixed(2)}
-- Total income: $${totalIncome.toFixed(2)}
-- Average daily spending: $${avgDailySpending.toFixed(2)}
-- Top spending category: ${topCategory ? topCategory[0] : 'None'} ($${topCategory ? topCategory[1].toFixed(2) : 0})
+        // Get active goals progress
+        const activeGoals = await Goal.find({ userId, status: 'active' });
+        const goalsProgress = activeGoals.map(g => {
+            const percent = g.targetAmount > 0 ? Math.round((g.currentAmount / g.targetAmount) * 100) : 0;
+            return { title: g.title, percent };
+        });
 
-Provide ONE brief, encouraging financial tip (maximum 20 words). Be specific and actionable.`;
+        const prompt = `You are a friendly financial advisor. Based on this user's last 7 days:
+- Total spent: ${totalSpent.toFixed(2)} XAF
+- Total income: ${totalIncome.toFixed(2)} XAF
+- Average daily spending: ${avgDailySpending.toFixed(2)} XAF
+- Top spending category: ${topCategory ? topCategory[0] : 'None'} (${topCategory ? topCategory[1].toFixed(2) : 0} XAF)
+- Active goals: ${goalsProgress.length > 0 ? goalsProgress.map(g => `${g.title} (${g.percent}%)`).join(', ') : 'None'}
+
+Provide ONE brief, encouraging financial tip (maximum 25 words). Be specific and actionable based on their data.`;
 
         const aiResponse = await callGeminiAPI(prompt);
 
@@ -87,7 +85,8 @@ Provide ONE brief, encouraging financial tip (maximum 20 words). Be specific and
                 stats: {
                     weeklySpending: totalSpent,
                     dailyAverage: avgDailySpending,
-                    topCategory: topCategory ? topCategory[0] : null
+                    topCategory: topCategory ? topCategory[0] : null,
+                    goalsProgress: goalsProgress.slice(0, 3)
                 }
             }
         });
@@ -153,31 +152,32 @@ exports.getBudgetSuggestions = async (req, res) => {
         const prompt = `You are a financial advisor. Analyze this budget data and provide suggestions.
 
 Current Budget Performance:
-${budgetPerformance.map(b => `- ${b.category}: $${b.spent.toFixed(2)} / $${b.budget.toFixed(2)} (${b.percent}%) - ${b.status}`).join('\n')}
+${budgetPerformance.map(b => `- ${b.category}: ${b.spent.toFixed(2)} / ${b.budget.toFixed(2)} XAF (${b.percent}%) - ${b.status}`).join('\n')}
 
 Categories without budgets (with current spending):
-${categoriesWithoutBudgets.map(cat => `- ${cat}: $${categorySpending[cat].toFixed(2)}`).join('\n')}
+${categoriesWithoutBudgets.map(cat => `- ${cat}: ${categorySpending[cat].toFixed(2)} XAF`).join('\n')}
 
 Provide 3-4 specific, actionable budget recommendations. Format as a JSON array of strings.
-Example: ["Reduce dining out budget by 15%", "Set a $200 budget for entertainment"]
+Example: ["Reduce dining out budget by 15%", "Set a 50000 XAF budget for entertainment"]
 
-Return ONLY the JSON array, no other text.`;
+Return ONLY the JSON array, no other text or markdown.`;
 
         const aiResponse = await callGeminiAPI(prompt);
 
         let suggestions = [];
         if (aiResponse) {
             try {
-                // Clean response
+                // Clean response - remove markdown code blocks
                 let cleaned = aiResponse.trim();
-                if (cleaned.startsWith('```json')) {
-                    cleaned = cleaned.replace(/^```json\n?/, '').replace(/\n?```$/, '');
-                } else if (cleaned.startsWith('```')) {
-                    cleaned = cleaned.replace(/^```\n?/, '').replace(/\n?```$/, '');
-                }
+                cleaned = cleaned.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
                 suggestions = JSON.parse(cleaned);
+
+                // Ensure it's an array
+                if (!Array.isArray(suggestions)) {
+                    throw new Error('Response is not an array');
+                }
             } catch (e) {
-                console.error('JSON Parse Error:', e);
+                console.error('JSON Parse Error:', e, 'Response:', aiResponse);
                 suggestions = [
                     "Review categories exceeding 80% of budget",
                     "Set budgets for categories with regular spending",
@@ -191,7 +191,7 @@ Return ONLY the JSON array, no other text.`;
             data: {
                 suggestions,
                 performance: budgetPerformance,
-                unbedgetedCategories: categoriesWithoutBudgets.map(cat => ({
+                unbudgetedCategories: categoriesWithoutBudgets.map(cat => ({
                     category: cat,
                     currentSpending: categorySpending[cat]
                 }))
@@ -281,19 +281,31 @@ exports.getSpendingInsights = async (req, res) => {
             ? ((totalExpense - previousExpense) / previousExpense * 100)
             : 0;
 
+        // Get goals data for context
+        const activeGoals = await Goal.find({ userId, status: 'active' });
+        const goalsContext = activeGoals.length > 0
+            ? activeGoals.map(g => {
+                const remaining = g.targetAmount - g.currentAmount;
+                const daysToDeadline = g.deadline ? Math.ceil((new Date(g.deadline) - new Date()) / (1000 * 60 * 60 * 24)) : null;
+                return `${g.title}: ${remaining.toFixed(0)} XAF remaining${daysToDeadline ? `, ${daysToDeadline} days left` : ''}`;
+            }).join('; ')
+            : 'No active goals';
+
         const prompt = `You are a financial analyst. Analyze this spending data:
 
 Period: ${period}
-- Total Income: $${totalIncome.toFixed(2)}
-- Total Expenses: $${totalExpense.toFixed(2)}
+- Total Income: ${totalIncome.toFixed(2)} XAF
+- Total Expenses: ${totalExpense.toFixed(2)} XAF
 - Savings Rate: ${savingsRate.toFixed(1)}%
 - Expense Change vs Previous Period: ${expenseChange >= 0 ? '+' : ''}${expenseChange.toFixed(1)}%
 
 Top Spending Categories:
-${topCategories.map(([cat, amount], i) => `${i + 1}. ${cat}: $${amount.toFixed(2)}`).join('\n')}
+${topCategories.map(([cat, amount], i) => `${i + 1}. ${cat}: ${amount.toFixed(2)} XAF`).join('\n')}
 
-Provide 3-4 key insights about spending patterns and trends. Be specific and data-driven.
-Format as JSON array of strings. Return ONLY the JSON array.`;
+Active Savings Goals: ${goalsContext}
+
+Provide 3-4 key insights about spending patterns and trends. Be specific and data-driven. Consider their goals in your advice.
+Format as JSON array of strings. Return ONLY the JSON array, no markdown.`;
 
         const aiResponse = await callGeminiAPI(prompt);
 
@@ -301,14 +313,14 @@ Format as JSON array of strings. Return ONLY the JSON array.`;
         if (aiResponse) {
             try {
                 let cleaned = aiResponse.trim();
-                if (cleaned.startsWith('```json')) {
-                    cleaned = cleaned.replace(/^```json\n?/, '').replace(/\n?```$/, '');
-                } else if (cleaned.startsWith('```')) {
-                    cleaned = cleaned.replace(/^```\n?/, '').replace(/\n?```$/, '');
-                }
+                cleaned = cleaned.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
                 insights = JSON.parse(cleaned);
+
+                if (!Array.isArray(insights)) {
+                    throw new Error('Not an array');
+                }
             } catch (e) {
-                console.error('JSON Parse Error:', e);
+                console.error('JSON Parse Error:', e, 'Response:', aiResponse);
                 insights = [
                     `Your spending ${expenseChange >= 0 ? 'increased' : 'decreased'} by ${Math.abs(expenseChange).toFixed(1)}% compared to the previous period`,
                     `${topCategories[0]?.[0] || 'Your top category'} represents your largest expense area`,
@@ -346,7 +358,7 @@ Format as JSON array of strings. Return ONLY the JSON array.`;
     }
 };
 
-// Detect unusual spending patterns
+// Detect unusual spending patterns and budget alerts
 exports.getSpendingAlerts = async (req, res) => {
     try {
         const userId = req.user._id;
@@ -385,7 +397,7 @@ exports.getSpendingAlerts = async (req, res) => {
                 alerts.push({
                     type: 'unusual_high',
                     category,
-                    message: `Unusually high ${category} spending: $${maxAmount.toFixed(2)} (avg: $${average.toFixed(2)})`
+                    message: `Unusually high ${category} spending: ${maxAmount.toFixed(0)} XAF (avg: ${average.toFixed(0)} XAF)`
                 });
             }
         });
@@ -419,13 +431,30 @@ exports.getSpendingAlerts = async (req, res) => {
                 alerts.push({
                     type: 'budget_warning',
                     category: b.categoryId?.name,
-                    message: `${b.categoryId?.name} budget is ${percent.toFixed(0)}% used ($${spent.toFixed(2)} / $${b.amount.toFixed(2)})`
+                    message: `${b.categoryId?.name} budget is ${percent.toFixed(0)}% used (${spent.toFixed(0)} / ${b.amount.toFixed(0)} XAF)`
                 });
             } else if (percent >= 100) {
                 alerts.push({
                     type: 'budget_exceeded',
                     category: b.categoryId?.name,
-                    message: `${b.categoryId?.name} budget exceeded! $${spent.toFixed(2)} / $${b.amount.toFixed(2)}`
+                    message: `${b.categoryId?.name} budget exceeded! ${spent.toFixed(0)} / ${b.amount.toFixed(0)} XAF`
+                });
+            }
+        });
+
+        // Check goals at risk
+        const activeGoals = await Goal.find({ userId, status: 'active', deadline: { $exists: true, $ne: null } });
+
+        activeGoals.forEach(g => {
+            const remaining = g.targetAmount - g.currentAmount;
+            const daysLeft = Math.ceil((new Date(g.deadline) - new Date()) / (1000 * 60 * 60 * 24));
+
+            if (daysLeft > 0 && daysLeft <= 30 && remaining > 0) {
+                const dailyNeeded = remaining / daysLeft;
+                alerts.push({
+                    type: 'goal_at_risk',
+                    category: g.title,
+                    message: `Goal "${g.title}" needs ${dailyNeeded.toFixed(0)} XAF/day for ${daysLeft} days to reach target`
                 });
             }
         });
