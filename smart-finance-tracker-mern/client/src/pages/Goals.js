@@ -5,6 +5,8 @@ import Footer from '../components/Footer';
 import Modal from '../components/Modal';
 import { showToast } from '../utils/toastConfig';
 import { formatCurrency } from '../utils/formatCurrency';
+import CustomDropdown from '../components/CustomDropdown';
+import CustomDatePicker from '../components/CustomDatePicker';
 import {
   getGoals,
   createGoal,
@@ -312,14 +314,14 @@ function Goals() {
                     <div className="flex gap-2">
                       <button
                         onClick={() => editGoal(g)}
-                        className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900 rounded-lg transition-colors"
+                        className="p-2 text-text-secondary dark:text-neutral-400 hover:text-primary-kombu dark:hover:text-neutral-200 transition-colors"
                         title="Edit"
                       >
                         <i className="bi bi-pencil"></i>
                       </button>
                       <button
                         onClick={() => removeGoal(g)}
-                        className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900 rounded-lg transition-colors"
+                        className="p-2 text-text-secondary dark:text-neutral-400 hover:text-primary-kombu dark:hover:text-neutral-200 transition-colors"
                         title="Delete"
                       >
                         <i className="bi bi-trash"></i>
@@ -331,8 +333,8 @@ function Goals() {
                     <div className="w-full h-3 rounded-full bg-bg-secondary dark:bg-neutral-700 overflow-hidden">
                       <div
                         className={`h-3 rounded-full transition-all duration-500 ${pct >= 100 ? 'bg-accent-sage dark:bg-green-500' :
-                            pct >= 80 ? 'bg-yellow-400' :
-                              'bg-primary-moss'
+                          pct >= 80 ? 'bg-yellow-500' :
+                            'bg-primary-moss'
                           }`}
                         style={{ width: `${pct}%` }}
                       />
@@ -374,6 +376,7 @@ function Goals() {
                       <input
                         type="number"
                         min="0"
+                        step="100.00"
                         placeholder="Add amount"
                         value={contributionAmounts[g._id] || ''}
                         onChange={(e) => setContributionAmounts({ ...contributionAmounts, [g._id]: e.target.value })}
@@ -418,13 +421,13 @@ function Goals() {
                   >
                     <div className="flex items-center gap-3">
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center ${h.type === 'completed' ? 'bg-accent-sage/20 dark:bg-green-900' :
-                          h.type === 'contribution' ? 'bg-primary-light dark:bg-primary-moss/20' :
-                            'bg-bg-overlay dark:bg-neutral-600'
+                        h.type === 'contribution' ? 'bg-primary-light dark:bg-primary-moss/20' :
+                          'bg-bg-overlay dark:bg-neutral-600'
                         }`}>
                         <i className={`bi ${h.type === 'completed' ? 'bi-check-circle text-accent-sage dark:text-green-400' :
-                            h.type === 'contribution' ? 'bi-plus-circle text-primary-moss' :
-                              h.type === 'created' ? 'bi-flag text-primary-kombu dark:text-primary-light' :
-                                'bi-x-circle text-accent-terracotta dark:text-red-400'
+                          h.type === 'contribution' ? 'bi-plus-circle text-primary-moss' :
+                            h.type === 'created' ? 'bi-flag text-primary-kombu dark:text-primary-light' :
+                              'bi-x-circle text-accent-terracotta dark:text-red-400'
                           }`}></i>
                       </div>
                       <div>
@@ -456,17 +459,15 @@ function Goals() {
       >
         <form onSubmit={save} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">Template (Optional)</label>
-            <select
+            <CustomDropdown
+              label="Template (Optional)"
               value={form.template}
-              onChange={(e) => applyTemplate(e.target.value)}
-              className="w-full px-4 py-2 border border-border-primary dark:border-neutral-600 rounded-lg bg-bg-card dark:bg-neutral-700 text-text-primary dark:text-neutral-100 focus:ring-2 focus:ring-primary-moss focus:border-transparent"
-            >
-              <option value="">Select a template</option>
-              {templates.map((t) => (
-                <option key={t.key} value={t.key}>{t.title}</option>
-              ))}
-            </select>
+              onChange={(key) => applyTemplate(key)}
+              options={[
+                { value: '', label: 'Select a template' },
+                ...templates.map(t => ({ value: t.key, label: t.title }))
+              ]}
+            />
           </div>
 
           <div>
@@ -508,24 +509,16 @@ function Goals() {
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">Start Date</label>
-              <input
-                type="date"
-                value={form.startDate}
-                onChange={(e) => setForm((f) => ({ ...f, startDate: e.target.value }))}
-                className="w-full px-4 py-2 border border-border-primary dark:border-neutral-600 rounded-lg bg-bg-card dark:bg-neutral-700 text-text-primary dark:text-neutral-100 focus:ring-2 focus:ring-primary-moss focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">Deadline</label>
-              <input
-                type="date"
-                value={form.deadline}
-                onChange={(e) => setForm((f) => ({ ...f, deadline: e.target.value }))}
-                className="w-full px-4 py-2 border border-border-primary dark:border-neutral-600 rounded-lg bg-bg-card dark:bg-neutral-700 text-text-primary dark:text-neutral-100 focus:ring-2 focus:ring-primary-moss focus:border-transparent"
-              />
-            </div>
+            <CustomDatePicker
+              label="Start Date"
+              value={form.startDate}
+              onChange={(val) => setForm((f) => ({ ...f, startDate: val }))}
+            />
+            <CustomDatePicker
+              label="Deadline"
+              value={form.deadline}
+              onChange={(val) => setForm((f) => ({ ...f, deadline: val }))}
+            />
           </div>
 
           <div>

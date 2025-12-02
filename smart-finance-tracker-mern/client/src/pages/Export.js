@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { showToast } from '../utils/toastConfig';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import CustomDropdown from '../components/CustomDropdown';
+import CustomDatePicker from '../components/CustomDatePicker';
 import {
     getCategories,
     getTransactions,
@@ -311,34 +313,44 @@ function Export() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">Start Date</label>
-                            <input type="date" name="startDate" value={filters.startDate} onChange={handleFilterChange}
-                                className="w-full px-4 py-2 border border-border-primary dark:border-neutral-600 rounded-lg bg-bg-card dark:bg-neutral-700 text-text-primary dark:text-neutral-100 focus:ring-2 focus:ring-primary-moss focus:border-transparent" />
+                            <CustomDatePicker
+                                label="Start Date"
+                                value={filters.startDate}
+                                onChange={(val) => setFilters({ ...filters, startDate: val })}
+                            />
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">End Date</label>
-                            <input type="date" name="endDate" value={filters.endDate} onChange={handleFilterChange}
-                                className="w-full px-4 py-2 border border-border-primary dark:border-neutral-600 rounded-lg bg-bg-card dark:bg-neutral-700 text-text-primary dark:text-neutral-100 focus:ring-2 focus:ring-primary-moss focus:border-transparent" />
+                            <CustomDatePicker
+                                label="End Date"
+                                value={filters.endDate}
+                                onChange={(val) => setFilters({ ...filters, endDate: val })}
+                            />
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">Type</label>
-                            <select name="type" value={filters.type} onChange={handleFilterChange}
-                                className="w-full px-4 py-2 border border-border-primary dark:border-neutral-600 rounded-lg bg-bg-card dark:bg-neutral-700 text-text-primary dark:text-neutral-100 focus:ring-2 focus:ring-primary-moss focus:border-transparent">
-                                <option value="">All Types</option>
-                                <option value="income">Income</option>
-                                <option value="expense">Expense</option>
-                            </select>
+                            <CustomDropdown
+                                label="Type"
+                                value={filters.type}
+                                onChange={(val) => setFilters({ ...filters, type: val })}
+                                options={[
+                                    { value: '', label: 'All Types' },
+                                    { value: 'income', label: 'Income' },
+                                    { value: 'expense', label: 'Expense' }
+                                ]}
+                            />
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">Category</label>
-                            <select name="category" value={filters.category} onChange={handleFilterChange}
-                                className="w-full px-4 py-2 border border-border-primary dark:border-neutral-600 rounded-lg bg-bg-card dark:bg-neutral-700 text-text-primary dark:text-neutral-100 focus:ring-2 focus:ring-primary-moss focus:border-transparent">
-                                <option value="">All Categories</option>
-                                {categories.map(cat => <option key={cat._id} value={cat._id}>{cat.name}</option>)}
-                            </select>
+                            <CustomDropdown
+                                label="Category"
+                                value={filters.category}
+                                onChange={(val) => setFilters({ ...filters, category: val })}
+                                options={[
+                                    { value: '', label: 'All Categories' },
+                                    ...categories.map(cat => ({ value: cat._id, label: cat.name }))
+                                ]}
+                            />
                         </div>
                     </div>
                 </div>

@@ -5,6 +5,8 @@ import { formatCurrency } from '../utils/formatCurrency';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Modal from '../components/Modal';
+import CustomDropdown from '../components/CustomDropdown';
+import CustomDatePicker from '../components/CustomDatePicker';
 import {
     getTransactions,
     deleteTransaction,
@@ -219,81 +221,53 @@ function Transactions() {
                     {showFilters && (
                         <>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">
-                                        Type
-                                    </label>
-                                    <select
-                                        name="type"
-                                        value={filters.type}
-                                        onChange={handleFilterChange}
-                                        className="w-full px-4 py-2 border border-border-primary dark:border-neutral-600 rounded-lg bg-bg-card dark:bg-neutral-700 text-text-primary dark:text-neutral-100 focus:ring-2 focus:ring-primary-moss focus:border-transparent"
-                                    >
-                                        <option value="">All Types</option>
-                                        <option value="income">Income</option>
-                                        <option value="expense">Expense</option>
-                                    </select>
-                                </div>
+                                <CustomDropdown
+                                    label="Type"
+                                    value={filters.type}
+                                    onChange={(val) => setFilters({ ...filters, type: val })}
+                                    options={[
+                                        { value: '', label: 'All Types' },
+                                        { value: 'income', label: 'Income' },
+                                        { value: 'expense', label: 'Expense' }
+                                    ]}
+                                />
 
-                                <div>
-                                    <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">
-                                        Category
-                                    </label>
-                                    <select
-                                        name="category"
-                                        value={filters.category}
-                                        onChange={handleFilterChange}
-                                        className="w-full px-4 py-2 border border-border-primary dark:border-neutral-600 rounded-lg bg-bg-card dark:bg-neutral-700 text-text-primary dark:text-neutral-100 focus:ring-2 focus:ring-primary-moss focus:border-transparent"
-                                    >
-                                        <option value="">All Categories</option>
-                                        {categories.map(cat => (
-                                            <option key={cat._id} value={cat._id}>{cat.name}</option>
-                                        ))}
-                                    </select>
-                                </div>
+                                <CustomDropdown
+                                    label="Category"
+                                    value={filters.category}
+                                    onChange={(val) => setFilters({ ...filters, category: val })}
+                                    options={[
+                                        { value: '', label: 'All Categories' },
+                                        ...categories.map(cat => ({
+                                            value: cat._id,
+                                            label: cat.name
+                                        }))
+                                    ]}
+                                />
 
-                                <div>
-                                    <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">
-                                        Start Date
-                                    </label>
-                                    <input
-                                        type="date"
-                                        name="startDate"
-                                        value={filters.startDate}
-                                        onChange={handleFilterChange}
-                                        className="w-full px-4 py-2 border border-border-primary dark:border-neutral-600 rounded-lg bg-bg-card dark:bg-neutral-700 text-text-primary dark:text-neutral-100 focus:ring-2 focus:ring-primary-moss focus:border-transparent"
-                                    />
-                                </div>
+                                <CustomDatePicker
+                                    label="Start Date"
+                                    value={filters.startDate}
+                                    onChange={(val) => setFilters({ ...filters, startDate: val })}
+                                />
 
-                                <div>
-                                    <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">
-                                        End Date
-                                    </label>
-                                    <input
-                                        type="date"
-                                        name="endDate"
-                                        value={filters.endDate}
-                                        onChange={handleFilterChange}
-                                        className="w-full px-4 py-2 border border-border-primary dark:border-neutral-600 rounded-lg bg-bg-card dark:bg-neutral-700 text-text-primary dark:text-neutral-100 focus:ring-2 focus:ring-primary-moss focus:border-transparent"
-                                    />
-                                </div>
+                                <CustomDatePicker
+                                    label="End Date"
+                                    value={filters.endDate}
+                                    onChange={(val) => setFilters({ ...filters, endDate: val })}
+                                />
 
-                                <div>
-                                    <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">
-                                        Sort By
-                                    </label>
-                                    <select
-                                        name="sort"
-                                        value={filters.sort}
-                                        onChange={handleFilterChange}
-                                        className="w-full px-4 py-2 border border-border-primary dark:border-neutral-600 rounded-lg bg-bg-card dark:bg-neutral-700 text-text-primary dark:text-neutral-100 focus:ring-2 focus:ring-primary-moss focus:border-transparent"
-                                    >
-                                        <option value="date-desc">Date (Newest)</option>
-                                        <option value="date-asc">Date (Oldest)</option>
-                                        <option value="amount-desc">Amount (High)</option>
-                                        <option value="amount-asc">Amount (Low)</option>
-                                    </select>
-                                </div>
+                                <CustomDropdown
+                                    label="Sort By"
+                                    value={filters.sort}
+                                    onChange={(val) => setFilters({ ...filters, sort: val })}
+                                    options={[
+                                        { value: 'date-desc', label: 'Date (Newest)' },
+                                        { value: 'date-asc', label: 'Date (Oldest)' },
+                                        { value: 'amount-desc', label: 'Amount (High)' },
+                                        { value: 'amount-asc', label: 'Amount (Low)' }
+                                    ]}
+                                />
                             </div>
 
                             <div className="flex gap-3 mt-4">
@@ -356,14 +330,14 @@ function Transactions() {
                                         <div className="flex space-x-2">
                                             <button
                                                 onClick={() => handleEdit(transaction)}
-                                                className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900 rounded-lg transition-colors"
+                                                className="p-2 text-text-secondary dark:text-neutral-400 hover:text-primary-kombu dark:hover:text-neutral-200 transition-colors"
                                                 title="Edit"
                                             >
                                                 <i className="bi bi-pencil"></i>
                                             </button>
                                             <button
                                                 onClick={() => handleDelete(transaction._id)}
-                                                className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900 rounded-lg transition-colors"
+                                                className="p-2 text-text-secondary dark:text-neutral-400 hover:text-primary-kombu dark:hover:text-neutral-200 transition-colors"
                                                 title="Delete"
                                             >
                                                 <i className="bi bi-trash"></i>
@@ -390,21 +364,22 @@ function Transactions() {
             >
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">Type</label>
-                        <select
-                            name="type"
+                        <CustomDropdown
+                            label="Type"
                             value={formData.type}
-                            onChange={handleFormChange}
-                            className="w-full px-4 py-2 border border-border-primary dark:border-neutral-600 rounded-lg bg-bg-card dark:bg-neutral-700 text-text-primary dark:text-neutral-100 focus:ring-2 focus:ring-primary-moss focus:border-transparent"
+                            onChange={(val) => setFormData({ ...formData, type: val })}
+                            options={[
+                                { value: 'income', label: 'Income' },
+                                { value: 'expense', label: 'Expense' }
+                            ]}
                             required
-                        >
-                            <option value="income">Income</option>
-                            <option value="expense">Expense</option>
-                        </select>
+                        />
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">Amount ({user?.currency || 'XAF'})</label>
+                        <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">
+                            Amount ({user?.currency || 'XAF'})
+                        </label>
                         <input
                             type="number"
                             name="amount"
@@ -413,33 +388,34 @@ function Transactions() {
                             className="w-full px-4 py-2 border border-border-primary dark:border-neutral-600 rounded-lg bg-bg-card dark:bg-neutral-700 text-text-primary dark:text-neutral-100 focus:ring-2 focus:ring-primary-moss focus:border-transparent"
                             placeholder="0.00"
                             min="0"
-                            step="0.01"
+                            step="100.00"
                             required
                         />
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">Category</label>
                         <div className="flex space-x-2">
-                            <select
-                                name="category"
+                            <CustomDropdown
+                                label="Category"
                                 value={formData.category}
-                                onChange={handleFormChange}
-                                className="flex-1 px-4 py-2 border border-border-primary dark:border-neutral-600 rounded-lg bg-bg-card dark:bg-neutral-700 text-text-primary dark:text-neutral-100 focus:ring-2 focus:ring-primary-moss focus:border-transparent"
+                                onChange={(val) => setFormData({ ...formData, category: val })}
+                                options={filteredCategories.map(cat => ({
+                                    value: cat._id,
+                                    label: cat.name
+                                }))}
+                                placeholder="Select Category"
                                 required
-                            >
-                                <option value="">Select Category</option>
-                                {filteredCategories.map(cat => (
-                                    <option key={cat._id} value={cat._id}>{cat.name}</option>
-                                ))}
-                            </select>
-                            <button
-                                type="button"
-                                onClick={() => setShowCategoryForm(!showCategoryForm)}
-                                className="px-4 py-2 bg-bg-secondary dark:bg-neutral-600 text-text-primary dark:text-neutral-300 rounded-lg hover:bg-border-primary dark:hover:bg-neutral-500 transition-colors"
-                            >
-                                {showCategoryForm ? 'Cancel' : '+ New'}
-                            </button>
+                                className="flex-1"
+                            />
+                            <div className="pt-7">
+                                <button
+                                    type="button"
+                                    onClick={() => setShowCategoryForm(!showCategoryForm)}
+                                    className="px-4 py-2.5 bg-bg-secondary dark:bg-neutral-600 text-text-primary dark:text-neutral-300 rounded-lg hover:bg-border-primary dark:hover:bg-neutral-500 transition-colors whitespace-nowrap"
+                                >
+                                    {showCategoryForm ? 'Cancel' : '+ New'}
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -462,20 +438,17 @@ function Transactions() {
                         </div>
                     )}
 
-                    <div>
-                        <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">Date</label>
-                        <input
-                            type="date"
-                            name="date"
-                            value={formData.date}
-                            onChange={handleFormChange}
-                            className="w-full px-4 py-2 border border-border-primary dark:border-neutral-600 rounded-lg bg-bg-card dark:bg-neutral-700 text-text-primary dark:text-neutral-100 focus:ring-2 focus:ring-primary-moss focus:border-transparent"
-                            required
-                        />
-                    </div>
+                    <CustomDatePicker
+                        label="Date"
+                        value={formData.date}
+                        onChange={(val) => setFormData({ ...formData, date: val })}
+                        required
+                    />
 
                     <div>
-                        <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">Description (Optional)</label>
+                        <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">
+                            Description (Optional)
+                        </label>
                         <input
                             type="text"
                             name="description"
@@ -486,13 +459,25 @@ function Transactions() {
                         />
                     </div>
 
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="w-full px-6 py-3 bg-primary-kombu dark:bg-primary-moss text-white rounded-lg hover:bg-primary-dark dark:hover:bg-primary-kombu transition-colors disabled:opacity-50"
-                    >
-                        {loading ? 'Saving...' : editingTransaction ? 'Update Transaction' : 'Add Transaction'}
-                    </button>
+                    <div className="flex gap-3 pt-4">
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setShowModal(false);
+                                setEditingTransaction(null);
+                            }}
+                            className="flex-1 px-6 py-3 bg-bg-secondary dark:bg-neutral-700 text-text-primary dark:text-neutral-300 rounded-lg hover:bg-border-primary dark:hover:bg-neutral-600 transition-colors"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="flex-1 px-6 py-3 bg-primary-kombu dark:bg-primary-moss text-white rounded-lg hover:bg-primary-dark dark:hover:bg-primary-kombu transition-colors disabled:opacity-50"
+                        >
+                            {loading ? 'Saving...' : editingTransaction ? 'Update' : 'Add Transaction'}
+                        </button>
+                    </div>
                 </form>
             </Modal>
         </div>

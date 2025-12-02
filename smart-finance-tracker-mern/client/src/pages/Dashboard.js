@@ -5,6 +5,8 @@ import { formatCurrency } from '../utils/formatCurrency';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Modal from '../components/Modal';
+import CustomDropdown from '../components/CustomDropdown';
+import CustomDatePicker from '../components/CustomDatePicker';
 import {
     getSummaryStats,
     getTransactions,
@@ -323,17 +325,17 @@ function Dashboard() {
                                 <div
                                     key={index}
                                     className={`flex items-start gap-3 p-3 rounded-lg ${alert.type === 'budget_exceeded'
-                                            ? 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800'
-                                            : alert.type === 'budget_warning'
-                                                ? 'bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800'
-                                                : 'bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800'
+                                        ? 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800'
+                                        : alert.type === 'budget_warning'
+                                            ? 'bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800'
+                                            : 'bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800'
                                         }`}
                                 >
                                     <i className={`bi ${alert.type === 'budget_exceeded'
-                                            ? 'bi-x-circle-fill text-red-600 dark:text-red-400'
-                                            : alert.type === 'budget_warning'
-                                                ? 'bi-exclamation-circle-fill text-yellow-600 dark:text-yellow-400'
-                                                : 'bi-info-circle-fill text-orange-600 dark:text-orange-400'
+                                        ? 'bi-x-circle-fill text-red-600 dark:text-red-400'
+                                        : alert.type === 'budget_warning'
+                                            ? 'bi-exclamation-circle-fill text-yellow-600 dark:text-yellow-400'
+                                            : 'bi-info-circle-fill text-orange-600 dark:text-orange-400'
                                         } text-lg flex-shrink-0 mt-0.5`}></i>
                                     <p className="text-sm text-text-secondary dark:text-neutral-400 leading-relaxed">
                                         {alert.message}
@@ -445,9 +447,9 @@ function Dashboard() {
                                 </div>
                                 <div className="w-full bg-gray-200 dark:bg-neutral-600 rounded-full h-3">
                                     <div
-                                        className={`h-3 rounded-full transition-all duration-500 ${budgetProgress > 100 ? 'bg-red-500' :
-                                            budgetProgress >= 80 ? 'bg-yellow-400' :
-                                                'bg-green-500'
+                                        className={`h-3 rounded-full transition-all duration-500 ${budgetProgress > 100 ? 'bg-red-700' :
+                                            budgetProgress >= 80 ? 'bg-yellow-500' :
+                                                'bg-accent-sage dark:bg-green-600'
                                             }`}
                                         style={{ width: `${Math.min(100, budgetProgress)}%` }}
                                     ></div>
@@ -566,14 +568,14 @@ function Dashboard() {
                                         <div className="flex space-x-2">
                                             <button
                                                 onClick={() => handleEdit(transaction)}
-                                                className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900 rounded-lg transition-colors"
+                                                className="p-2 text-text-secondary dark:text-neutral-400 hover:text-primary-kombu dark:hover:text-neutral-200 transition-colors"
                                                 title="Edit"
                                             >
                                                 <i className="bi bi-pencil"></i>
                                             </button>
                                             <button
                                                 onClick={() => handleDelete(transaction._id)}
-                                                className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900 rounded-lg transition-colors"
+                                                className="p-2 text-text-secondary dark:text-neutral-400 hover:text-primary-kombu dark:hover:text-neutral-200 transition-colors"
                                                 title="Delete"
                                             >
                                                 <i className="bi bi-trash"></i>
@@ -600,17 +602,16 @@ function Dashboard() {
             >
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">Type</label>
-                        <select
-                            name="type"
+                        <CustomDropdown
+                            label="Type"
                             value={formData.type}
-                            onChange={handleFormChange}
-                            className="w-full px-4 py-2 border border-border-primary dark:border-neutral-600 rounded-lg bg-bg-card dark:bg-neutral-700 text-text-primary dark:text-neutral-100 focus:ring-2 focus:ring-primary-moss focus:border-transparent"
+                            onChange={(val) => setFormData({ ...formData, type: val })}
+                            options={[
+                                { value: 'income', label: 'Income' },
+                                { value: 'expense', label: 'Expense' }
+                            ]}
                             required
-                        >
-                            <option value="income">Income</option>
-                            <option value="expense">Expense</option>
-                        </select>
+                        />
                     </div>
 
                     <div>
@@ -625,33 +626,34 @@ function Dashboard() {
                             className="w-full px-4 py-2 border border-border-primary dark:border-neutral-600 rounded-lg bg-bg-card dark:bg-neutral-700 text-text-primary dark:text-neutral-100 focus:ring-2 focus:ring-primary-moss focus:border-transparent"
                             placeholder="0.00"
                             min="0"
-                            step="0.01"
+                            step="100.00"
                             required
                         />
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">Category</label>
                         <div className="flex space-x-2">
-                            <select
-                                name="category"
+                            <CustomDropdown
+                                label="Category"
                                 value={formData.category}
-                                onChange={handleFormChange}
-                                className="flex-1 px-4 py-2 border border-border-primary dark:border-neutral-600 rounded-lg bg-bg-card dark:bg-neutral-700 text-text-primary dark:text-neutral-100 focus:ring-2 focus:ring-primary-moss focus:border-transparent"
+                                onChange={(val) => setFormData({ ...formData, category: val })}
+                                options={filteredCategories.map(cat => ({
+                                    value: cat._id,
+                                    label: cat.name
+                                }))}
+                                placeholder="Select Category"
                                 required
-                            >
-                                <option value="">Select Category</option>
-                                {filteredCategories.map(cat => (
-                                    <option key={cat._id} value={cat._id}>{cat.name}</option>
-                                ))}
-                            </select>
-                            <button
-                                type="button"
-                                onClick={() => setShowCategoryForm(!showCategoryForm)}
-                                className="px-4 py-2 bg-bg-secondary dark:bg-neutral-600 text-text-primary dark:text-neutral-300 rounded-lg hover:bg-border-primary dark:hover:bg-neutral-500 transition-colors"
-                            >
-                                {showCategoryForm ? 'Cancel' : '+ New'}
-                            </button>
+                                className="flex-1"
+                            />
+                            <div className="pt-7">
+                                <button
+                                    type="button"
+                                    onClick={() => setShowCategoryForm(!showCategoryForm)}
+                                    className="px-4 py-2.5 bg-bg-secondary dark:bg-neutral-600 text-text-primary dark:text-neutral-300 rounded-lg hover:bg-border-primary dark:hover:bg-neutral-500 transition-colors whitespace-nowrap"
+                                >
+                                    {showCategoryForm ? 'Cancel' : '+ New'}
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -674,17 +676,13 @@ function Dashboard() {
                         </div>
                     )}
 
-                    <div>
-                        <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">Date</label>
-                        <input
-                            type="date"
-                            name="date"
-                            value={formData.date}
-                            onChange={handleFormChange}
-                            className="w-full px-4 py-2 border border-border-primary dark:border-neutral-600 rounded-lg bg-bg-card dark:bg-neutral-700 text-text-primary dark:text-neutral-100 focus:ring-2 focus:ring-primary-moss focus:border-transparent"
-                            required
-                        />
-                    </div>
+                    <CustomDatePicker
+                        label="Date"
+                        value={formData.date}
+                        onChange={(val) => setFormData({ ...formData, date: val })}
+                        mode="date"
+                        required
+                    />
 
                     <div>
                         <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">

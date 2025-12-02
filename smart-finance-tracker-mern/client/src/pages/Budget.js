@@ -4,6 +4,8 @@ import { showToast } from '../utils/toastConfig';
 import { formatCurrency } from '../utils/formatCurrency';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import CustomDropdown from '../components/CustomDropdown';
+import CustomDatePicker from '../components/CustomDatePicker';
 import { getCategories, getBudgets, createBudget, updateBudget, deleteBudget, getBudgetSuggestions } from '../services/api';
 
 function Budget() {
@@ -157,11 +159,11 @@ function Budget() {
                         <p className="text-text-secondary dark:text-neutral-400">Plan monthly budgets by category</p>
                     </div>
                     <div className="flex items-center gap-3">
-                        <input
-                            type="month"
+                        <CustomDatePicker
                             value={month}
-                            onChange={(e) => setMonth(e.target.value)}
-                            className="px-4 py-2 border border-border-primary dark:border-neutral-600 rounded-lg bg-bg-card dark:bg-neutral-700 text-text-primary dark:text-neutral-100 focus:ring-2 focus:ring-primary-moss focus:border-transparent"
+                            onChange={(val) => setMonth(val)}
+                            mode="month"
+                            className="w-48"
                         />
                         <button
                             onClick={() => {
@@ -261,15 +263,15 @@ function Budget() {
                             <h3 className="text-sm text-text-secondary dark:text-neutral-400 uppercase mb-2 font-medium">
                                 Remaining
                             </h3>
-                            <div className="text-3xl font-serif font-medium text-primary-moss dark:text-green-400">
+                            <div className="text-3xl font-serif font-medium text-primary-moss dark:text-green-600">
                                 {formatCurrency(Math.max(0, getTotalBudget() - getTotalSpent()), user?.currency || 'XAF')} {user?.currency === 'XAF' ? 'frs' : ''}
                             </div>
                             <div className="mt-3">
                                 <div className="w-full bg-gray-200 dark:bg-neutral-600 rounded-full h-2">
                                     <div
-                                        className={`h-2 rounded-full transition-all ${getOverallProgress() > 100 ? 'bg-red-500' :
-                                            getOverallProgress() >= 80 ? 'bg-yellow-400' :
-                                                'bg-green-500'
+                                        className={`h-2 rounded-full transition-all ${getOverallProgress() > 100 ? 'bg-red-700' :
+                                            getOverallProgress() >= 80 ? 'bg-yellow-500' :
+                                                'bg-accent-sage dark:bg-green-600'
                                             }`}
                                         style={{ width: `${Math.min(100, getOverallProgress())}%` }}
                                     ></div>
@@ -294,7 +296,7 @@ function Budget() {
                             {budgets.map(b => (
                                 <div key={b.budgetId} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-bg-secondary dark:bg-neutral-700 rounded-lg hover:bg-bg-overlay dark:hover:bg-neutral-600 transition-colors border border-border-primary dark:border-neutral-600">
                                     <div className="flex items-center space-x-4 mb-3 sm:mb-0">
-                                        <div className={`w-12 h-12 rounded-full flex items-center justify-center ${b.percent > 100 ? 'bg-red-200 dark:bg-red-900' : b.percent >= 80 ? 'bg-yellow-200 dark:bg-yellow-900' : 'bg-green-200 dark:bg-green-900'}`}>
+                                        <div className={`w-12 h-12 rounded-full flex items-center justify-center ${b.percent > 100 ? 'bg-red-200 dark:bg-red-900' : b.percent >= 80 ? 'bg-yellow-500 dark:bg-yellow-900' : 'bg-accent-sage/60'}`}>
                                             <i className="bi bi-pie-chart-fill text-xl"></i>
                                         </div>
                                         <div>
@@ -307,11 +309,17 @@ function Budget() {
                                     <div className="flex items-center space-x-3">
                                         <div className="w-48">
                                             <div className="w-full bg-gray-200 dark:bg-neutral-600 rounded h-3 overflow-hidden">
-                                                <div className={`h-3 ${b.percent >= 80 && b.percent <= 100 ? 'bg-yellow-400' : b.percent > 100 ? 'bg-red-500' : 'bg-green-500'}`} style={{ width: `${Math.min(100, b.percent || 0)}%` }}></div>
+                                                <div className={`h-3 ${b.percent >= 80 && b.percent <= 100 ? 'bg-yellow-500' : b.percent > 100 ? 'bg-red-700' : 'bg-accent-sage dark:bg-green-600'}`} style={{ width: `${Math.min(100, b.percent || 0)}%` }}></div>
                                             </div>
                                         </div>
-                                        <button className="px-3 py-2 text-sm border border-border-primary rounded-lg" onClick={() => { setShowForm(true); setForm({ budgetId: b.budgetId, categoryId: b.categoryId, amount: b.limit, month }) }}>Edit</button>
-                                        <button className="px-3 py-2 text-sm text-red-600 border border-border-primary rounded-lg" onClick={() => del(b.budgetId)}>Delete</button>
+                                        <button className="px-3 py-2 text-text-secondary dark:text-neutral-400 hover:text-primary-kombu dark:hover:text-neutral-200 transition-colors" title="Edit"
+                                            onClick={() => { setShowForm(true); setForm({ budgetId: b.budgetId, categoryId: b.categoryId, amount: b.limit, month }) }}>
+                                            <i className="bi bi-pencil"></i>
+                                        </button>
+                                        <button className="px-3 py-2 text-text-secondary dark:text-neutral-400 hover:text-primary-kombu dark:hover:text-neutral-200 transition-colors" title="Delete"
+                                            onClick={() => del(b.budgetId)}>
+                                            <i className="bi bi-trash"></i>
+                                        </button>
                                     </div>
                                 </div>
                             ))}
@@ -324,16 +332,16 @@ function Budget() {
                         <form onSubmit={save}>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-text-secondary dark:text-neutral-300 mb-2">Category</label>
-                                    <select
-                                        className="w-full px-4 py-2 border border-border-primary dark:border-neutral-600 rounded-lg bg-bg-card dark:bg-neutral-700 text-text-primary dark:text-neutral-100 focus:ring-2 focus:ring-primary-moss focus:border-transparent"
+                                    <CustomDropdown
+                                        label="Category"
                                         value={form.categoryId}
-                                        onChange={e => setForm({ ...form, categoryId: e.target.value })}
+                                        onChange={(val) => setForm({ ...form, categoryId: val })}
+                                        options={[
+                                            { value: '', label: 'Select category' },
+                                            ...categories.map(c => ({ value: c._id, label: c.name }))
+                                        ]}
                                         required
-                                    >
-                                        <option value="">Select category</option>
-                                        {categories.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
-                                    </select>
+                                    />
                                 </div>
 
                                 <div>
@@ -342,7 +350,7 @@ function Budget() {
                                         <span className="inline-flex items-center px-3 rounded-l-lg border border-r-0 border-border-primary dark:border-neutral-600 bg-bg-secondary dark:bg-neutral-700 text-text-secondary dark:text-neutral-300">{user?.currency || 'XAF'}</span>
                                         <input
                                             type="number"
-                                            step="0.01"
+                                            step="100.00"
                                             value={form.amount}
                                             onChange={e => setForm({ ...form, amount: e.target.value })}
                                             className="flex-1 px-4 py-2 border border-border-primary dark:border-neutral-600 rounded-r-lg bg-bg-card dark:bg-neutral-700 text-text-primary dark:text-neutral-100 focus:ring-2 focus:ring-primary-moss focus:border-transparent"

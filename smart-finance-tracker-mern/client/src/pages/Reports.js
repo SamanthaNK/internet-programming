@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { showToast } from '../utils/toastConfig';
 import { formatCurrency } from '../utils/formatCurrency';
+import CustomDropdown from '../components/CustomDropdown';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -416,16 +417,15 @@ function Reports() {
                                 <h3 className="text-lg font-medium text-primary-kombu dark:text-primary-light">
                                     Monthly Overview
                                 </h3>
-                                <select
-                                    value={selectedYear}
-                                    onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-                                    className="px-3 py-1 border border-border-primary dark:border-neutral-600 rounded-lg bg-bg-card dark:bg-neutral-700 text-text-primary dark:text-neutral-100 text-sm focus:ring-2 focus:ring-primary-moss focus:border-transparent"
-                                >
-                                    {[...Array(5)].map((_, i) => {
+                                <CustomDropdown
+                                    value={selectedYear.toString()}
+                                    onChange={(val) => setSelectedYear(parseInt(val))}
+                                    options={[...Array(5)].map((_, i) => {
                                         const year = new Date().getFullYear() - i;
-                                        return <option key={year} value={year}>{year}</option>;
+                                        return { value: year.toString(), label: year.toString() };
                                     })}
-                                </select>
+                                    className="w-32"
+                                />
                             </div>
                             <div className="h-80">
                                 <Line data={monthlyChartData} options={getChartOptions('Income vs Expenses')} />
