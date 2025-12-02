@@ -273,7 +273,7 @@ function Dashboard() {
                                         AI Financial Tip
                                     </h3>
                                     <span className="text-xs bg-primary-moss/20 dark:bg-primary-moss/30 text-primary-moss dark:text-primary-light px-2 py-0.5 rounded-full font-medium">
-                                        Powered by AI
+                                        Powered by Gemini
                                     </span>
                                 </div>
                                 {loadingTip ? (

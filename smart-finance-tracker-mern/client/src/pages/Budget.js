@@ -183,20 +183,6 @@ function Budget() {
                     </div>
                 </div>
 
-                {/* Header controls card (templates, save) */}
-                <div className="bg-bg-card dark:bg-neutral-800 rounded-xl shadow-md p-6 mb-6 border border-border-primary dark:border-neutral-700">
-                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                        <div className="flex items-center gap-3">
-                            <div className="text-sm text-text-secondary dark:text-neutral-400">Month:</div>
-                            <div className="text-sm font-medium">{month}</div>
-                        </div>
-                        <div className="flex items-center gap-3">
-                            <button className="px-3 py-2 bg-bg-secondary dark:bg-neutral-700 rounded-lg text-sm" onClick={() => { /* placeholder for export */ }}>Export</button>
-                            <button className="px-3 py-2 bg-bg-secondary dark:bg-neutral-700 rounded-lg text-sm" onClick={() => { /* placeholder */ }}>Manage Templates</button>
-                        </div>
-                    </div>
-                </div>
-
                 {/* AI Budget Suggestions */}
                 {aiSuggestions.length > 0 && showSuggestions && (
                     <div className="bg-gradient-to-r from-primary-light/50 to-accent-seafoam/30 dark:from-neutral-800/50 dark:to-neutral-700/50 backdrop-blur-sm rounded-xl shadow-md p-6 mb-6 border border-primary-moss/20 dark:border-primary-moss/30">
