@@ -16,6 +16,9 @@ const aiRoutes = require('./routes/aiRoutes');
 // Creating Express app
 const app = express();
 
+// Trust proxy when behind a reverse proxy (enables correct IP detection for rate limiting)
+app.set('trust proxy', 1);
+
 // Middleware
 app.use(cors());
 app.use(express.json());
