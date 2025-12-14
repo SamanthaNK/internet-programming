@@ -1,5 +1,6 @@
 const Transaction = require('../models/transactionModel');
 const Category = require('../models/categoryModel')
+const cache = require('../utils/cache');
 
 // Get all transactions for user
 exports.getTransactions = async (req, res) => {
@@ -95,6 +96,9 @@ exports.createTransaction = async (req, res) => {
             .findById(transaction._id)
             .populate('category', 'name type');
 
+        // Clear user AI cache when a new transaction is created
+        try { cache.clearUser(req.user._id.toString()); } catch (e) { console.error('Cache clear error:', e); }
+
         res.status(201).json({
             success: true,
             message: 'Transaction created successfully',
@@ -159,6 +163,9 @@ exports.updateTransaction = async (req, res) => {
 
         await transaction.save();
 
+        // Clear user AI cache when a transaction is updated
+        try { cache.clearUser(req.user._id.toString()); } catch (e) { console.error('Cache clear error:', e); }
+
         const populatedTransaction = await Transaction
             .findById(transaction._id)
             .populate('category', 'name type');
@@ -199,6 +206,9 @@ exports.deleteTransaction = async (req, res) => {
         }
 
         await transaction.deleteOne();
+
+        // Clear user AI cache when a transaction is deleted
+        try { cache.clearUser(req.user._id.toString()); } catch (e) { console.error('Cache clear error:', e); }
 
         res.json({
             success: true,

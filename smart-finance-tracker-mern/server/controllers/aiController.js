@@ -24,10 +24,19 @@ const Budget = require('../models/budgetModel');
 const Category = require('../models/categoryModel');
 const Goal = require('../models/goalModel');
 
+const cache = require('../utils/cache');
+
 // Get financial tip for dashboard
 exports.getDashboardTip = async (req, res) => {
     try {
         const userId = req.user._id;
+
+        // Check cache first
+        const cacheKey = `${userId}:dashboardTip`;
+        const cached = cache.get(cacheKey);
+        if (cached) {
+            return res.json({ success: true, data: cached });
+        }
 
         // Get last 7 days of transactions
         const sevenDaysAgo = new Date();
@@ -78,18 +87,20 @@ Provide ONE brief, encouraging financial tip (maximum 25 words). Be specific and
 
         const aiResponse = await callGeminiAPI(prompt);
 
-        res.json({
-            success: true,
-            data: {
-                tip: aiResponse || "Track your daily expenses to identify patterns and save more effectively.",
-                stats: {
-                    weeklySpending: totalSpent,
-                    dailyAverage: avgDailySpending,
-                    topCategory: topCategory ? topCategory[0] : null,
-                    goalsProgress: goalsProgress.slice(0, 3)
-                }
+        const responsePayload = {
+            tip: aiResponse || "Track your daily expenses to identify patterns and save more effectively.",
+            stats: {
+                weeklySpending: totalSpent,
+                dailyAverage: avgDailySpending,
+                topCategory: topCategory ? topCategory[0] : null,
+                goalsProgress: goalsProgress.slice(0, 3)
             }
-        });
+        };
+
+        // Cache for 10 minutes
+        cache.set(cacheKey, responsePayload, 10 * 60 * 1000);
+
+        res.json({ success: true, data: responsePayload });
 
     } catch (error) {
         console.error('Dashboard Tip Error:', error);
@@ -186,17 +197,19 @@ Return ONLY the JSON array, no other text or markdown.`;
             }
         }
 
-        res.json({
-            success: true,
-            data: {
-                suggestions,
-                performance: budgetPerformance,
-                unbudgetedCategories: categoriesWithoutBudgets.map(cat => ({
-                    category: cat,
-                    currentSpending: categorySpending[cat]
-                }))
-            }
-        });
+        const responsePayload = {
+            suggestions,
+            performance: budgetPerformance,
+            unbudgetedCategories: categoriesWithoutBudgets.map(cat => ({
+                category: cat,
+                currentSpending: categorySpending[cat]
+            }))
+        };
+
+        // Cache budget suggestions for 10 minutes
+        cache.set(`${userId}:budgetSuggestions`, responsePayload, 10 * 60 * 1000);
+
+        res.json({ success: true, data: responsePayload });
 
     } catch (error) {
         console.error('Budget Suggestions Error:', error);
@@ -329,19 +342,21 @@ Format as JSON array of strings. Return ONLY the JSON array, no markdown.`;
             }
         }
 
-        res.json({
-            success: true,
-            data: {
-                insights,
-                metrics: {
-                    totalIncome,
-                    totalExpense,
-                    savingsRate: savingsRate.toFixed(1),
-                    expenseChange: expenseChange.toFixed(1),
-                    topCategories: topCategories.map(([cat, amount]) => ({ category: cat, amount }))
-                }
+        const responsePayload = {
+            insights,
+            metrics: {
+                totalIncome,
+                totalExpense,
+                savingsRate: savingsRate.toFixed(1),
+                expenseChange: expenseChange.toFixed(1),
+                topCategories: topCategories.map(([cat, amount]) => ({ category: cat, amount }))
             }
-        });
+        };
+
+        // Cache spending insights for 10 minutes
+        cache.set(`${userId}:spendingInsights:${period}`, responsePayload, 10 * 60 * 1000);
+
+        res.json({ success: true, data: responsePayload });
 
     } catch (error) {
         console.error('Spending Insights Error:', error);
