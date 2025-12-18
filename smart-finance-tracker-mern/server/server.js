@@ -12,6 +12,7 @@ const reportRoutes = require('./routes/reportRoutes');
 const budgetRoutes = require('./routes/budgetRoutes');
 const goalRoutes = require('./routes/goalRoutes');
 const aiRoutes = require('./routes/aiRoutes');
+const settingsRoutes = require('./routes/settingsRoutes');
 
 // Creating Express app
 const app = express();
@@ -44,6 +45,7 @@ app.use('/api/reports', reportRoutes);
 app.use('/api/budgets', budgetRoutes);
 app.use('/api/goals', goalRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/settings', settingsRoutes);
 
 // Start server
 const PORT = process.env.PORT || 5000;

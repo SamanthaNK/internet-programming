@@ -41,6 +41,25 @@ const userSchema = new mongoose.Schema({
     isActive: {
         type: Boolean,
         default: true
+    },
+    settings: {
+        theme: {
+            type: String,
+            enum: ['light', 'dark'],
+            default: 'light'
+        },
+        currency: {
+            type: String,
+            default: 'USD'
+        },
+        notifications: {
+            type: Boolean,
+            default: true
+        },
+        language: {
+            type: String,
+            default: 'en'
+        }
     }
 },
     {

@@ -212,4 +212,17 @@ export const getSpendingAlerts = () => {
     return api.get('/ai/spending-alerts');
 };
 
+// Settings functions
+export const getSettings = () => {
+    return api.get('/settings');
+};
+
+export const updateSettings = (settingsData) => {
+    return api.put('/settings', settingsData);
+};
+
+export const resetSettings = () => {
+    return api.post('/settings/reset');
+};
+
 export default api;
