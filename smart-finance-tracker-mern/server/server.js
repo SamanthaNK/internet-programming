@@ -21,16 +21,27 @@ const app = express();
 app.set('trust proxy', 1);
 
 // Middleware
-app.use(cors());
+// Middleware
+app.use(cors({
+    origin: process.env.NODE_ENV === 'production'
+        ? process.env.FRONTEND_URL
+        : 'http://localhost:3000',
+    credentials: true
+}));
 app.use(express.json());
 
 // Connecting to MongoDB
-mongoose.connect(process.env.MONGODB_URL)
-    .then(() => console.log('MongoDB connected successfully'))
-    .catch((err) => {
-        console.error('MongoDB connection error:', err);
-        process.exit(1);
-    });
+mongoose.connect(process.env.MONGODB_URL, {
+    dbName: 'financetrackerdb',
+})
+.then((conn) => {
+    console.log('MongoDB connected successfully');
+    console.log('Database:', conn.connection.name);
+})
+.catch((err) => {
+    console.error('MongoDB connection error:', err.message);
+    process.exit(1);
+});
 
 // Test route
 app.get('/', (req, res) => {
