@@ -3,7 +3,7 @@ const Settings = require('../models/settingsModel');
 // Get user settings
 const getSettings = async (req, res) => {
     try {
-        const userId = req.user.id;
+        const userId = req.user._id;
         const settings = await Settings.getOrCreateSettings(userId);
 
         res.json({
@@ -22,7 +22,7 @@ const getSettings = async (req, res) => {
 // Update user settings
 const updateSettings = async (req, res) => {
     try {
-        const userId = req.user.id;
+        const userId = req.user._id;
         const { theme, currency, notifications, language, dateFormat, timezone } = req.body;
 
         const settings = await Settings.findOneAndUpdate(
@@ -57,7 +57,7 @@ const updateSettings = async (req, res) => {
 // Reset settings to default
 const resetSettings = async (req, res) => {
     try {
-        const userId = req.user.id;
+        const userId = req.user._id;
         const defaultSettings = {
             theme: 'light',
             currency: 'USD',

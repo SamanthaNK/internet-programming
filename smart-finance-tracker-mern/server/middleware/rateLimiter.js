@@ -1,14 +1,13 @@
 let authLimiter;
 let aiLimiter;
 
-// Try to use express-rate-limit if available; otherwise provide a small in-memory fallback limiter
 try {
     const rateLimit = require('express-rate-limit');
 
-    // Auth limiter: 5 requests per 15 minutes per IP
+    // Auth limiter: 10 requests per 15 minutes per IP
     authLimiter = rateLimit({
         windowMs: 15 * 60 * 1000, // 15 minutes
-        max: 5,
+        max: 10,
         standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
         legacyHeaders: false,
         message: {
@@ -17,10 +16,10 @@ try {
         }
     });
 
-    // AI limiter: 10 requests per 1 hour per IP
+    // AI limiter: 5 requests per 1 hour per IP
     aiLimiter = rateLimit({
         windowMs: 60 * 60 * 1000, // 1 hour
-        max: 10,
+        max: 5,
         standardHeaders: true,
         legacyHeaders: false,
         message: {

@@ -31,10 +31,10 @@ function Footer() {
                     <div>
                         <h4 className="text-sm font-medium text-neutral-900 dark:text-neutral-100 uppercase mb-4">Support</h4>
                         <div className="space-y-2">
-                            <a href="#" className="block text-sm text-neutral-600 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition">
+                            <a href="https://make-everything-ok.com/" className="block text-sm text-neutral-600 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition">
                                 Help Center
                             </a>
-                            <a href="#" className="block text-sm text-neutral-600 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition">
+                            <a href="https://make-everything-ok.com/" className="block text-sm text-neutral-600 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition">
                                 Privacy Policy
                             </a>
                         </div>

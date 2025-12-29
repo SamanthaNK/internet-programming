@@ -17,6 +17,7 @@ import Budget from './pages/Budget';
 import Goals from './pages/Goals';
 import Export from './pages/Export';
 import SessionTimeout from './pages/SessionTimeout';
+import Settings from './pages/Settings';
 
 const ProtectedRoute = ({ children }) => {
     const token = localStorage.getItem('token');
@@ -149,6 +150,14 @@ function App() {
                             element={
                                 <ProtectedRoute>
                                     <Goals />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/settings"
+                            element={
+                                <ProtectedRoute>
+                                    <Settings />
                                 </ProtectedRoute>
                             }
                         />

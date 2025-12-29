@@ -14,7 +14,7 @@ const settingsSchema = new mongoose.Schema({
     },
     currency: {
         type: String,
-        enum: ['USD', 'EUR', 'GBP', 'XAF'],
+        enum: ['XAF', 'USD', 'EUR', 'GBP', 'NGN', 'ZAR'],
         default: 'XAF'
     },
     notifications: {
