@@ -1,4 +1,4 @@
-# Smart Finance Tracker
+# [Smart Finance Tracker](https://finance-tracker-frontend-2wke.onrender.com)
 
 ### Overview:
 A web-based personal finance management application that helps users track expenses, manage budgets, set financial goals and receive AI-powered financial insights to improve your financial health.
@@ -33,7 +33,9 @@ A web-based personal finance management application that helps users track expen
 - **Bcrypt.js** - Password hashing
 
 #### External Services
-- **AI API** - OpenAI/Claude/Gemini
+- **AI API** - Gemini
+- **MongoDB Atlas** - Cloud database hosting
+- **Render** - Application hosting and deployment
 
 ### Installation
 #### Prerequisites
@@ -89,6 +91,23 @@ Server will run on http://localhost:5000
 ```
 Client will run on http://localhost:3000
 
+### Production URLs
+- **Frontend**: https://finance-tracker-frontend-2wke.onrender.com
+- **Backend API**: https://finance-tracker-backend-5ctd.onrender.com/api
+
+### Deployment Configuration
+
+**Frontend (Render)**:
+- Build Command: `npm install && npm run build`
+- Publish Directory: `build`
+- Environment Variables: `REACT_APP_API_URL`
+
+**Backend (Render)**:
+- Build Command: `npm install`
+- Start Command: `node server.js`
+- Environment Variables: All variables from server/.env
+
+
 ### Project Structure
 
 ```
@@ -99,6 +118,7 @@ smart-finance-tracker/
 │   ├── models/                      # Mongoose schemas
 │   ├── routes/                      # API routes
 │   ├── scripts/                     # Utility scripts
+│   ├── utils/                       # Helper utilities
 │   ├── server.js                    # Express app entry
 │   └── package.json                 # Backend dependencies
 │
@@ -109,6 +129,7 @@ smart-finance-tracker/
 │   │   ├── context/                 # React Context
 │   │   ├── pages/                   # Page components
 │   │   ├── services/                # API services
+│   │   ├── utils/                   # Utilities
 │   │   ├── App.js                   # Main app component
 │   │   ├── index.js                 # React entry point
 │   │   └── index.css                # Global styles (Tailwind)
@@ -117,10 +138,21 @@ smart-finance-tracker/
 │
 └── .gitignore                       # Git ignore file
 ```
+
+### Planned Features
+1. Receipt scanning with OCR
+2. Recurring transaction automation
+3. Financial health score calculation
+4. Push notifications
+5. Offline mode
+6. Mobile native apps (React Native)
+7. Social features (split bills, shared accounts)
+8. Gamification (achievements, challenges)
+
 ### Team
 - Samantha Ngong   @SamanthaNK
 - Davida Assene   @Davibyte
 - Pearly Kusona   @Pearly-Kusona25
 
 ### Status:
-Project currently under development.
+This project is part of an academic assignment for Internet Programming course. Project currently under development.
