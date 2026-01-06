@@ -39,9 +39,6 @@ const settingsSchema = new mongoose.Schema({
     timestamps: true
 });
 
-// Index for efficient queries
-settingsSchema.index({ user: 1 });
-
 // Static method to get or create settings for a user
 settingsSchema.statics.getOrCreateSettings = async function(userId) {
     let settings = await this.findOne({ user: userId });
