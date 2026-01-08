@@ -49,6 +49,17 @@ function Settings() {
             ...settings,
             [name]: value
         });
+        if (name === 'currency' || name === 'language') {
+            // Update currency or language in localStorage user object for immediate effect
+            const userData = localStorage.getItem('user');
+            if (userData) {
+                const userObj = JSON.parse(userData);
+                userObj[name] = value;
+                localStorage.setItem('user', JSON.stringify(userObj));
+            }
+            // Reload to apply changes everywhere
+            window.location.reload();
+        }
     };
 
     const handleCheckboxChange = (e) => {
@@ -110,7 +121,17 @@ function Settings() {
     const languageOptions = [
         { value: 'en', label: 'English' },
         { value: 'fr', label: 'French' },
-        { value: 'es', label: 'Spanish' }
+        { value: 'es', label: 'Spanish' },
+        { value: 'de', label: 'German' },
+        { value: 'zh', label: 'Chinese' },
+        { value: 'ar', label: 'Arabic' },
+        { value: 'pt', label: 'Portuguese' },
+        { value: 'hi', label: 'Hindi' },
+        { value: 'ru', label: 'Russian' },
+        { value: 'ja', label: 'Japanese' },
+        { value: 'sw', label: 'Swahili' },
+        { value: 'it', label: 'Italian' },
+        { value: 'ko', label: 'Korean' }
     ];
 
     const dateFormatOptions = [
